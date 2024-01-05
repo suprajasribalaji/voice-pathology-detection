@@ -1,15 +1,10 @@
 import './App.css';
+import Dashboard from "./Components/Dashboard";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Voice Pathology Detection
-        </p>
-      </header>
-    </div>
+    <Dashboard />
   );
-}
+};
 
 export default App;
