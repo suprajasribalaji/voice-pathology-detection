@@ -3,8 +3,10 @@ import { Cascader, Button, Typography } from 'antd';
 import AdminLogin from './admin/AdminLogin';
 import UserLogin from './user/UserLogin';
 //checking
+//tamil trying
 const { Title, Text } = Typography;
-// trying to merge both codes
+//suprja trying
+//abc
 const options = [
       {
         label: 'User',
