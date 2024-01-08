@@ -4,7 +4,6 @@ import AdminLogin from './admin/AdminLogin';
 import UserLogin from './user/UserLogin';
 
 const { Title, Text } = Typography;
-
 const options = [
       {
         label: 'User',
