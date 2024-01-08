@@ -1,9 +1,11 @@
+import { app, firestore } from '../../firebase-config';
+import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import React, { useState } from 'react';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, message, Select } from 'antd';
-
 import { useNavigate } from 'react-router-dom';
- 
+import { useAuth } from '../Authentication';
+
 const { Option } = Select;
 
 const prefixSelector = (
@@ -16,7 +18,7 @@ const prefixSelector = (
   </Form.Item>
 );
 
-const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
+const CollectionCreateForm = ({ open, Adduser, onCancel }) => {
   const [form] = Form.useForm();
   return (
     <Modal
@@ -29,8 +31,9 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
         form
           .validateFields()
           .then((values) => {
-            form.resetFields();
-            onCreate(values);
+          form.resetFields();
+          console.log(values);
+          Adduser(values);
           })
           .catch((info) => {
             console.log('Validate Failed:', info);
@@ -150,26 +153,68 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
 
 const UserLogin = () => {
   const navigate = useNavigate();
-  
+  const {userLogin} = useAuth()
   const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState(''); 
+  const [password, setPassword] = useState('');
   
-  const onCreate = (values) => {
-    if(values){
-      // console.log('Received values of form: ', values);
+  const Adduser = async (values) => {
+    const { username, confirm, phone, gender, email } = values;
+    if (values) {
+      try {
+        const collectionRef = collection(firestore, 'PatientsDB'); 
+        const res = await addDoc(collectionRef, {
+          Email: email,
+          Gender: gender,
+          Username: username,
+          Phone_number: phone,
+          Password: confirm
+        });
+        console.log('User added successfully!', res);
+      } catch (error) {
+        console.error('Error adding user: ', error);
+      }
+  
       message.success('Account created successfully! Please login to continue');
       setOpen(false);
     } else {
       message.error('Account creation failed! Please try again with filling all the fields correctly');
     }
   };
+  
 
   const onFinish = (values) => {
     console.log('Received values of form: ', values);
   };
 
-  const handleLogin = () => {
-    navigate('/usertest');
+  
+  const handleLogin = async () => {
+    const collectionRef = collection(firestore, 'PatientsDB');
+    console.log(collectionRef);
+  
+    try {
+      const querySnapshot = await getDocs(
+        query(collectionRef, where('Email', '==', email), where('Password', '==', password))
+      );
+  
+      if (!querySnapshot.empty) {
+        // userLogin(querySnapshot);
+        message.success('User logged in successfully');
+  
+        // Redirect to the /userpage after successful login
+        navigate('/usertest');
+  
+        console.log('User logged in successfully');
+      } else {
+        message.error('Invalid email or password');
+        console.log('Invalid email or password');
+      }
+    } catch (error) {
+      console.error('Error logging in:', error.message);
+    }
   };
+  
+  
 
   return (
     <div>
@@ -182,15 +227,16 @@ const UserLogin = () => {
         onFinish={onFinish}
       >
         <Form.Item
-          name="username"
+          name="email"
           rules={[
             {
               required: true,
-              message: 'Please input your Username!',
+              message: 'Please input your Email!',
             },
           ]}
         >
-          <Input prefix={<UserOutlined />} placeholder="Username" />
+          <Input prefix={<UserOutlined />} placeholder="Enter Your Mail Id"
+           onChange={(e) => setEmail(e.target.value)} />
         </Form.Item>
         
         <Form.Item
@@ -206,6 +252,7 @@ const UserLogin = () => {
             prefix={<LockOutlined />}
             type="password"
             placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Item>
 
@@ -218,7 +265,7 @@ const UserLogin = () => {
           <Button type="link" onClick={() => { setOpen(true) }}>Register Now!</Button>
           <CollectionCreateForm
             open={open}
-            onCreate={onCreate}
+            Adduser={Adduser}
             onCancel={() => {
               setOpen(false);
             }}

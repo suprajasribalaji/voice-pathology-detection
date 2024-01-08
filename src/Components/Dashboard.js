@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
 import { Cascader, Button, Typography } from 'antd';
-
 import AdminLogin from './admin/AdminLogin';
 import UserLogin from './user/UserLogin';
-<<<<<<< HEAD
-import DoctorPage from './doctor/Doctorpage';
-=======
 import DoctorLogin from './doctor/DoctorLogin';
->>>>>>> 8a452043ce47a189f4facf91ed1370bd220ec4ad
+
 
 const { Title, Text } = Typography;
 
