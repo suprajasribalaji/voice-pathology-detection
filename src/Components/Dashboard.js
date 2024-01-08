@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Cascader, Button, Typography } from 'antd';
 import AdminLogin from './admin/AdminLogin';
 import UserLogin from './user/UserLogin';
-import DoctorPage from './doctor/Doctorpage'
+import DoctorPage from './doctor/Doctorpage';
 
 const { Title, Text } = Typography;
 
