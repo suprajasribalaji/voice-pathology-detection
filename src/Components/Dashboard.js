@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Cascader, Button, Typography } from 'antd';
+
 import AdminLogin from './admin/AdminLogin';
 import UserLogin from './user/UserLogin';
-import DoctorPage from './doctor/Doctorpage'
+import DoctorLogin from './doctor/DoctorLogin';
 
 const { Title, Text } = Typography;
 
@@ -53,7 +54,7 @@ const Dashboard = () => {
       </div>
       <div style={{ marginLeft: '16%' }}>
         <div>
-          {currentAccess === 'admin' ? <AdminLogin /> : (currentAccess === 'doctor' ? <DoctorPage /> : <UserLogin />)}
+          {currentAccess === 'admin' ? <AdminLogin /> : (currentAccess === 'doctor' ? <DoctorLogin /> : <UserLogin />)}
         </div>
       </div>
     </div>
