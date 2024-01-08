@@ -158,7 +158,6 @@ const AdminPage = () => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: (text) => <a>{text}</a>,
     },
     {
       title: 'Age',
