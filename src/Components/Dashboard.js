@@ -4,7 +4,7 @@ import AdminLogin from './admin/AdminLogin';
 import UserLogin from './user/UserLogin';
 //checking
 const { Title, Text } = Typography;
-
+// trying to merge both codes
 const options = [
       {
         label: 'User',
