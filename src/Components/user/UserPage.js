@@ -40,7 +40,7 @@ const UserPage = () => {
       <Header
         style={{
           color:'white',
-          paddingBottom: '6%',
+          paddingBottom: '10%',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center'}}>
@@ -53,7 +53,7 @@ const UserPage = () => {
             </div>
           </div>
           <div>
-          <p>Welcome Supraja</p>
+            <p>Welcome Supraja</p>
           </div>
           <div>
             <Button type='primary' onClick={handleLogout}>Logout</Button>
