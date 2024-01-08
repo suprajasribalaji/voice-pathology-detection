@@ -2,29 +2,33 @@ import React, { useState } from 'react';
 import { Cascader, Button, Typography } from 'antd';
 import AdminLogin from './admin/AdminLogin';
 import UserLogin from './user/UserLogin';
+import DoctorPage from './doctor/Doctorpage'
 
 const { Title, Text } = Typography;
-
-const options = [
-      {
-        label: 'User',
-        value: 'user',
-      },
-      {
-        label: 'Admin',
-        value: 'admin',
-      },
-];
-
-const displayRender = (labels) => labels[labels.length - 1];
 
 const Dashboard = () => {
   const [currentAccess, setCurrentAccess] = useState("");
 
   const onChange = (value) => {
-    // console.log(value);
     setCurrentAccess(value[0]);
   };
+
+  const options = [
+    {
+      label: 'User',
+      value: 'user',
+    },
+    {
+      label: 'Admin',
+      value: 'admin',
+    },
+    {
+      label: 'Doctor',
+      value: 'doctor',
+    },
+  ];
+
+  const displayRender = (labels) => labels[labels.length - 1];
 
   return (
     <div style={{ display: 'flex', marginTop: '5%', padding: '10%', paddingTop: '10%' }}>
@@ -43,13 +47,13 @@ const Dashboard = () => {
             displayRender={displayRender}
             onChange={onChange}
           >
-            <Button type="link" style={{fontSize: '15px'}}>LOGIN</Button>
+            <Button type="link" style={{ fontSize: '15px' }}>LOGIN</Button>
           </Cascader>
         </div>
       </div>
       <div style={{ marginLeft: '16%' }}>
         <div>
-          {currentAccess === 'admin' ? <AdminLogin/> : <UserLogin/> }
+          {currentAccess === 'admin' ? <AdminLogin /> : (currentAccess === 'doctor' ? <DoctorPage /> : <UserLogin />)}
         </div>
       </div>
     </div>
