@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import { Cascader, Button, Typography } from 'antd';
 import AdminLogin from './admin/AdminLogin';
 import UserLogin from './user/UserLogin';
-//checking
-//tamil trying
+
 const { Title, Text } = Typography;
-//suprja trying
-//abc
+
 const options = [
       {
         label: 'User',
