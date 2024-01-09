@@ -3,6 +3,7 @@ import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { Button, Form, Input, message, Modal, Space, Table } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { firestore } from '../../firebase-config';
+import { hover } from '@testing-library/user-event/dist/hover';
 
 const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
   const [form] = Form.useForm();
@@ -50,16 +51,30 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
         </Form.Item>
 
         <Form.Item
-          name="Password"
-          label="Password_For_Doctor"
+          name="Email"
+          label="Email ID"
           rules={[
             {
+              required: true,
+              message: 'Please input Mail ID!',
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          name="Password"
+          label="Password"
+          rules={[
+            {
+              type: 'password',
               required: true,
               message: 'Please Enter Password!',
             },
           ]}
         >
-          <Input type="number" />
+          <Input />
         </Form.Item>
 
         <Form.Item
@@ -89,19 +104,6 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
         </Form.Item>
 
         <Form.Item
-          name="Email"
-          label="Email ID"
-          rules={[
-            {
-              required: true,
-              message: 'Please input Mail ID!',
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
           name="contactNumber"
           label="Contact Number"
           rules={[
@@ -111,7 +113,7 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
             },
           ]}
         >
-          <Input type="number" />
+          <Input />
         </Form.Item>
 
         <Form.Item
@@ -137,6 +139,7 @@ const AdminPage = () => {
   const [open, setOpen] = useState(false);
   const [isListDoctors, setListDoctors] = useState(false);
   const [doctorDetails, setDoctorDetails] = useState([]);
+  const [isDeleteClicked, setIsDeleteClicked] = useState(false);
 
   const onCreate = async (values) => {
     console.log('Received values of form: ', values);
@@ -165,7 +168,7 @@ const AdminPage = () => {
         const collectionRef = collection(firestore, 'DoctorDB');
         const querySnapshot = await getDocs(collectionRef);
         const doctorData = querySnapshot.docs.map((doc) => doc.data());
-
+        console.log(doctorData);
         setDoctorDetails(doctorData);
       } catch (error) {
         console.error('Error fetching doctor data:', error);
@@ -175,6 +178,11 @@ const AdminPage = () => {
     fetchData();
   }, []);
 
+  const handleDelete = () => {
+    setIsDeleteClicked(true);
+    message.success('Doctor deleted successfully!');
+  };
+
   const columns = [
     {
       title: 'Name',
@@ -183,8 +191,8 @@ const AdminPage = () => {
     },
     {
       title: 'Password',
-      dataIndex: 'Password_for_Doctor',
-      key: 'Password',
+      dataIndex: 'Password',
+      key: 'password',
     },
     {
       title: 'Years of Experience',
@@ -198,8 +206,8 @@ const AdminPage = () => {
     },
     {
       title: 'Email',
-      dataIndex: 'Mail',
-      key: 'Mail',
+      dataIndex: 'email',
+      key: 'email',
     },
     {
       title: 'Contact Number',
@@ -210,6 +218,11 @@ const AdminPage = () => {
       title: 'Address',
       dataIndex: 'clinicAddress',
       key: 'clinicAddress',
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (text, record) => <Button type='text' onClick={handleDelete} style={{color: isDeleteClicked?'red':'black'}}>Delete</Button>,
     },
   ];
 

@@ -1,14 +1,16 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+import { AuthProvider } from './Components/Authentication';
+
 import Dashboard from './Components/Dashboard';
 import AdminPage from './Components/admin/AdminPage';
 import UserTest from './Components/user/UserTest';
 import UserPage from './Components/user/UserPage';
 import Booking from './Components/consultation/Booking';
 import Payment from './Components/medication/Payment';
-import { AuthProvider } from './Components/Authentication';
-import DoctorPage from './Components/doctor/Doctorpage';
-import UserLogin from './Components/user/UserLogin'; // Make sure to import the UserLogin component
+import DoctorPage from './Components/doctor/DoctorPage';
+import UserLogin from './Components/user/UserLogin'; 
 
 function App() {
   return (

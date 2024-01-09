@@ -3,9 +3,6 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from 'firebase/firestore';
 import 'firebase/firestore'
 
-
-
-
 const firebaseConfig = {
   apiKey: "AIzaSyCFGRQ2jOYwFuVEsvW-fD5WOuQJtJTv_bk",
   authDomain: "voice-pathology-detectio-961c8.firebaseapp.com",
