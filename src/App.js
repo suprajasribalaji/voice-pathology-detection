@@ -9,7 +9,7 @@ import UserTest from './Components/user/UserTest';
 import UserPage from './Components/user/UserPage';
 import Booking from './Components/consultation/Booking';
 import Payment from './Components/medication/Payment';
-import DoctorPage from './Components/doctor/DoctorPage';
+import DoctorPage from './Components/doctor/Doctorpage';
 import UserLogin from './Components/user/UserLogin'; 
 
 function App() {
