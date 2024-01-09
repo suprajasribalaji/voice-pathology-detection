@@ -53,7 +53,7 @@ const UserTest = () => {
               </Title>
             </div>
             <div>
-              <Text>Please record your voice here for 1 second.</Text>
+              <Text>Please record your voice here</Text>
             </div>
             <div style={{marginTop: '4%'}}>
               <Space>
