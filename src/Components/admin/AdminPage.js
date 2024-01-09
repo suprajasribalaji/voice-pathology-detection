@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { collection, addDoc, getDocs } from 'firebase/firestore';
-import { Button, Form, Input, message, Modal, Space, Table } from 'antd';
+import { collection, addDoc, getDocs,deleteDoc,doc } from 'firebase/firestore';
+import { Button, Form, Input, message, Modal, Space, Table,Popconfirm } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { firestore } from '../../firebase-config';
 
@@ -158,6 +158,21 @@ const AdminPage = () => {
     }
   };
 
+
+  const handleDelete = async (record) => {
+    try {
+      const collectionRef = collection(firestore, 'DoctorDB');
+      await deleteDoc(doc(collectionRef, record.id));
+
+      message.success('Doctor deleted successfully!');
+      fetchData('DoctorDB'); 
+    } catch (error) {
+      console.error('Error deleting doctor:', error);
+      message.error('Failed to delete doctor. Please try again.');
+    }
+  };
+
+
   const fetchData = async (collectionName) => {
     try {
       const collectionRef = collection(firestore, collectionName);
@@ -221,8 +236,28 @@ const AdminPage = () => {
       dataIndex: 'clinicAddress',
       key: 'clinicAddress',
     },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (text, record) => (
+        <Space size="middle">
+         
+          <Popconfirm
+            title="Are you sure you want to delete this doctor?"
+            onConfirm={() => handleDelete(record)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button type="danger" danger>
+              Delete
+            </Button>
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  
   ];
-
+  
   const casesColumns = [
     {
       title: 'Name',
