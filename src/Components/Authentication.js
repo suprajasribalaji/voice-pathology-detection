@@ -1,16 +1,14 @@
 import React, { createContext, useContext, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [admin, setAdmin] = useState(null);
   const [doctor, setDoctor] = useState(null);
-  const nav = useNavigate
+
   const userLogin = (userData) => {
     setUser(userData);
     console.log(user);
-
   };
 
   const adminLogin = (adminData) => {
