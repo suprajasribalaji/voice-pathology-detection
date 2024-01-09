@@ -136,16 +136,15 @@ const AdminPage = () => {
 
   const [open, setOpen] = useState(false);
   const [isListDoctors, setListDoctors] = useState(false);
+  const [isListCases, setListCases] = useState(false);
   const [doctorDetails, setDoctorDetails] = useState([]);
+  const [casesDetails, setCasesDetails] = useState([]);
 
   const onCreate = async (values) => {
-    console.log('Received values of form: ', values);
-
     try {
       const collectionRef = collection(firestore, 'DoctorDB');
-      const docRef = await addDoc(collectionRef, values);
+      await addDoc(collectionRef, values);
 
-      // Fetch updated data from Firestore
       const querySnapshot = await getDocs(collectionRef);
       const updatedDoctorDetails = querySnapshot.docs.map((doc) => doc.data());
 
@@ -159,21 +158,32 @@ const AdminPage = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const collectionRef = collection(firestore, 'DoctorDB');
-        const querySnapshot = await getDocs(collectionRef);
-        const doctorData = querySnapshot.docs.map((doc) => doc.data());
-
-        setDoctorDetails(doctorData);
-      } catch (error) {
-        console.error('Error fetching doctor data:', error);
+  const fetchData = async (collectionName) => {
+    try {
+      const collectionRef = collection(firestore, collectionName);
+      const querySnapshot = await getDocs(collectionRef);
+      const data = querySnapshot.docs.map((doc) => ({
+        id: doc.id,  
+        ...doc.data(),
+      }));
+  
+      if (collectionName === 'DoctorDB') {
+        setDoctorDetails(data);
+      } else if (collectionName === 'CasesDB') {
+        setCasesDetails(data);
       }
-    };
+    } catch (error) {
+      console.error(`Error fetching ${collectionName} data:`, error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchData('DoctorDB');
+  }, [isListDoctors]);
 
-    fetchData();
-  }, []);
+  useEffect(() => {
+    fetchData('CasesDB');
+  }, [isListCases]);
 
   const columns = [
     {
@@ -183,7 +193,7 @@ const AdminPage = () => {
     },
     {
       title: 'Password',
-      dataIndex: 'Password_for_Doctor',
+      dataIndex: 'Password',
       key: 'Password',
     },
     {
@@ -198,8 +208,8 @@ const AdminPage = () => {
     },
     {
       title: 'Email',
-      dataIndex: 'Mail',
-      key: 'Mail',
+      dataIndex: 'Email',
+      key: 'Email',
     },
     {
       title: 'Contact Number',
@@ -213,8 +223,51 @@ const AdminPage = () => {
     },
   ];
 
+  const casesColumns = [
+    {
+      title: 'Name',
+      dataIndex: 'Name',
+      key: 'Name',
+    },
+    {
+      title: 'Study_ID',
+      dataIndex: 'id',
+      key: 'Study_id',
+    },
+    {
+      title: 'Age/Gender',
+      dataIndex: 'Age_Gender',
+      key: 'Age_Gender',
+    },
+    {
+      title: 'Contact',
+      dataIndex: 'Contact',
+      key: 'Contact',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'Email',
+      key: 'Email',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'Activated',
+      key: 'Activated',
+    },
+
+
+
+  ];
+
   const listDoctors = () => {
     setListDoctors(true);
+    setListCases(false);
+  };
+
+  const listCases = () => {
+    setListCases(true);
+    setListDoctors(false);
+    fetchData('CasesDB');
   };
 
   const handleLogout = () => {
@@ -237,6 +290,9 @@ const AdminPage = () => {
           <Button type="primary" onClick={listDoctors}>
             List Doctors
           </Button>
+          <Button type="primary" onClick={listCases}>
+            List Cases
+          </Button>
         </Space>
         <CollectionCreateForm
           open={open}
@@ -252,7 +308,12 @@ const AdminPage = () => {
           <Table columns={columns} dataSource={doctorDetails} />
         </div>
       )}
-      <div></div>
+      {isListCases && (
+        <div>
+          <h3>Cases details</h3>
+          <Table columns={casesColumns} dataSource={casesDetails} />
+        </div>
+      )}
     </div>
   );
 };
