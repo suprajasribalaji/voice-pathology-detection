@@ -83,6 +83,7 @@ const CollectionCreateForm = ({ open, Adduser, onCancel }) => {
           label="Password"
           rules={[
             {
+              type: 'password',
               required: true,
               message: 'Please input your password!',
             },

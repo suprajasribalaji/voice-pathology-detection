@@ -3,6 +3,7 @@ import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { Button, Form, Input, message, Modal, Space, Table } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { firestore } from '../../firebase-config';
+import { hover } from '@testing-library/user-event/dist/hover';
 
 const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
   const [form] = Form.useForm();
@@ -50,16 +51,30 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
         </Form.Item>
 
         <Form.Item
-          name="Password"
-          label="Password_For_Doctor"
+          name="Email"
+          label="Email ID"
           rules={[
             {
+              required: true,
+              message: 'Please input Mail ID!',
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          name="Password"
+          label="Password"
+          rules={[
+            {
+              type: 'password',
               required: true,
               message: 'Please Enter Password!',
             },
           ]}
         >
-          <Input type="number" />
+          <Input />
         </Form.Item>
 
         <Form.Item
@@ -89,19 +104,6 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
         </Form.Item>
 
         <Form.Item
-          name="Email"
-          label="Email ID"
-          rules={[
-            {
-              required: true,
-              message: 'Please input Mail ID!',
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
           name="contactNumber"
           label="Contact Number"
           rules={[
@@ -111,7 +113,7 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
             },
           ]}
         >
-          <Input type="number" />
+          <Input />
         </Form.Item>
 
         <Form.Item
@@ -138,7 +140,7 @@ const AdminPage = () => {
   const [isListDoctors, setListDoctors] = useState(false);
   const [isListCases, setListCases] = useState(false);
   const [doctorDetails, setDoctorDetails] = useState([]);
-  const [casesDetails, setCasesDetails] = useState([]);
+  const [isDeleteClicked, setIsDeleteClicked] = useState(false);
 
   const onCreate = async (values) => {
     try {
@@ -158,32 +160,21 @@ const AdminPage = () => {
     }
   };
 
-  const fetchData = async (collectionName) => {
-    try {
-      const collectionRef = collection(firestore, collectionName);
-      const querySnapshot = await getDocs(collectionRef);
-      const data = querySnapshot.docs.map((doc) => ({
-        id: doc.id,  
-        ...doc.data(),
-      }));
-  
-      if (collectionName === 'DoctorDB') {
-        setDoctorDetails(data);
-      } else if (collectionName === 'CasesDB') {
-        setCasesDetails(data);
-      }
-    } catch (error) {
-      console.error(`Error fetching ${collectionName} data:`, error);
-    }
-  };
-  
   useEffect(() => {
-    fetchData('DoctorDB');
-  }, [isListDoctors]);
+    const fetchData = async () => {
+      try {
+        const collectionRef = collection(firestore, 'DoctorDB');
+        const querySnapshot = await getDocs(collectionRef);
+        const doctorData = querySnapshot.docs.map((doc) => doc.data());
 
-  useEffect(() => {
-    fetchData('CasesDB');
-  }, [isListCases]);
+        setDoctorDetails(doctorData);
+      } catch (error) {
+        console.error('Error fetching doctor data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const columns = [
     {
@@ -193,7 +184,7 @@ const AdminPage = () => {
     },
     {
       title: 'Password',
-      dataIndex: 'Password',
+      dataIndex: 'Password_for_Doctor',
       key: 'Password',
     },
     {
@@ -208,8 +199,8 @@ const AdminPage = () => {
     },
     {
       title: 'Email',
-      dataIndex: 'Email',
-      key: 'Email',
+      dataIndex: 'Mail',
+      key: 'Mail',
     },
     {
       title: 'Contact Number',
@@ -220,6 +211,11 @@ const AdminPage = () => {
       title: 'Address',
       dataIndex: 'clinicAddress',
       key: 'clinicAddress',
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (text, record) => <Button type='text' onClick={handleDelete} style={{color: isDeleteClicked?'red':'black'}}>Delete</Button>,
     },
   ];
 
