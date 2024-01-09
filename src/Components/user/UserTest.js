@@ -1,29 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
+import { ReactMic } from "react-mic";
 import { Typography, Row, Col, Button, message, Upload, Space } from "antd";
 import { UploadOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
-const props = {
-  name: 'file',
-  action: 'https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188',
-  headers: {
-    authorization: 'authorization-text',
-  },
-  onChange(info) {
-    if (info.file.status !== 'uploading') {
-      console.log(info.file, info.fileList);
-    }
-    if (info.file.status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully`);
-    } else if (info.file.status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-};
-
 const UserTest = () => {
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordedAudioURL, setRecordedAudioURL] = useState(null);
+
   const navigate = useNavigate();
 
   const handlePageSwitch = () => {
@@ -32,7 +18,24 @@ const UserTest = () => {
 
   const handleLogout = () => {
     navigate('/');
-  }
+  };
+
+  const startRecording = () => {
+    setIsRecording(true);
+  };
+
+  const stopRecording = () => {
+    setIsRecording(false);
+  };
+
+  const onData = (recordedData) => {
+    console.log("Data recorded: ", recordedData);
+  };
+
+  const onStop = (recordedData) => {
+    console.log("Recording stopped: ", recordedData);
+    setRecordedAudioURL(URL.createObjectURL(recordedData.blob));
+  };
 
   return (
     <div>
@@ -53,19 +56,35 @@ const UserTest = () => {
               </Title>
             </div>
             <div>
-              <Text>Please record your voice here for 1 second.</Text>
+              <Text>Please record your voice here</Text>
             </div>
             <div style={{marginTop: '4%'}}>
               <Space>
-                <Upload {...props}>
+                <Upload>
                   <Button icon={<UploadOutlined />}>Click to Upload</Button>
                 </Upload>
-                <Button type="primary">Record your voice</Button>
               </Space>
             </div>
-          </Col>
-          <Col offset={4}>
-            <Button type="primary" onClick={handlePageSwitch}>Go to Consultation page</Button>
+            <div style={{marginTop: '2%'}}>
+            <Button type="primary" onClick={startRecording} disabled={isRecording}>Start</Button>
+              <ReactMic
+                record={isRecording}
+                onStop={onStop}
+                onData={onData}
+               />
+              <Button onClick={stopRecording} disabled={!isRecording}>Stop</Button>
+            </div>
+            <div style={{marginTop:'2%'}}>
+            {recordedAudioURL && (
+              <audio controls>
+                <source src={recordedAudioURL} type="audio/wav" />
+                Your browser does not support the audio element.
+              </audio>
+            )}
+            </div>
+            <div style={{marginTop: '4%'}}>
+              <Button type="primary" onClick={handlePageSwitch}>Go to Consultation page</Button>
+            </div>
           </Col>
         </Row>
       </div>
