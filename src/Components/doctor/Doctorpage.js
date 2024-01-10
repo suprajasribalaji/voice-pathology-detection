@@ -103,6 +103,19 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
                 </Form.Item>
 
                 <Form.Item
+                    name="Contact"
+                    label="Phone Number"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please Enter Your Phone Number!',
+                        },
+                    ]}
+                >
+                    <Input.TextArea />
+                </Form.Item>
+
+                <Form.Item
                     name="caseHistory"
                     label="Case History"
                     rules={[
@@ -192,25 +205,41 @@ const DoctorPage = () => {
 
     const Generate = async (values) => {
         console.log('Received values of form: ', values);
-        
+    
         try {
-            console.log("mailllll",values.Email);
-            const response = await axios.post('http://localhost:3001/send-email', {
+            
+            const emailResponse = await axios.post('http://localhost:3001/send-email', {
                 to: values.Email,
                 subject: 'Evaluation Report',
                 text: `Patient Name: ${values.patientName}\nPatient Age: ${values.patientage}\nCase History: ${values.caseHistory}\nAssessment Findings: ${values.assessmentFindings}\nVoice Evaluation: ${values.voiceEvaluation}\nFluency Evaluation: ${values.fluencyEvaluation}\nDiagnosis Impression: ${values.diagnosisImpression}\nPrognosis: ${values.prognosis}`,
             });
-
-            console.log(response.data);
-            if (response.status === 200) {
-                message.success("Mail Sent successfully");
+    
+            console.log('Email Response:', emailResponse.data);
+            if (emailResponse.status === 200) {
+                message.success('Email Sent successfully');
             }
-
+    
+            
+            const smsResponse = await axios.post('http://localhost:3001/send-sms', {
+                to: values.Contact, 
+                text: 'Your Report has been Generated. Check the Mail Now ',
+            });
+    
+            console.log('SMS Response:', smsResponse.data);
+            if(smsResponse.status===201)
+            {
+                message.success("Message Sent Succesfully")
+            }
+    
             setOpen(false);
         } catch (error) {
-            console.error('Error sending email:', error);
+            console.error('Error sending email and SMS:', error);
         }
     };
+    
+
+
+    
 
     const handleLogout = () => {
         navigate('/');
@@ -245,6 +274,7 @@ const DoctorPage = () => {
             patientName: selectedPatient.Name || '',
             patientage: selectedPatient.Age || '',
             Email: selectedPatient.Email || '',
+            Contact:selectedPatient.Contact || ''
         });
 
         setOpen(true);

@@ -1,6 +1,7 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
+const twilio = require('twilio');
 
 const app = express();
 const port = 3001;
@@ -39,6 +40,31 @@ app.post('/send-email', async (req, res) => {
             return res.status(500).send(error.toString());
         }
         res.status(200).send('Email sent: ' + info.response);
+    });
+});
+
+
+
+
+const accountSid = 'ACf5787791227c22c6cbf37b3058d31729';
+const authToken = '87a552f713e8f4e2ac7de4a8449026c1';
+const twilioClient = twilio(accountSid, authToken);
+
+app.post('/send-sms', (req, res) => {
+    const { to, text } = req.body;
+
+    twilioClient.messages.create({
+        body: text,
+        from: '+17193012636',
+        to,
+    })
+    .then(message => {
+        console.log('SMS sent:', message.sid);
+        res.status(201).send('SMS sent: ' + message.sid);
+    })
+    .catch(error => {
+        console.error('Error sending SMS:', error);
+        res.status(500).send(error.toString());
     });
 });
 
