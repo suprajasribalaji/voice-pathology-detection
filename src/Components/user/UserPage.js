@@ -6,7 +6,7 @@ import Medisync from '../medication/Medisync';
 import { useNavigate } from 'react-router-dom';
 
 const { Header, Content, Footer, Sider } = Layout;
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const sideMenuItems = [
   {
@@ -43,24 +43,25 @@ const UserPage = () => {
     <Layout>
       <Header
         style={{
+          backgroundColor: '#001529', // Set your desired background color
+          color: 'white',             // Set the text color
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          color: 'white',
-          paddingBottom: '10%',
-          justifyContent: 'center',
+          padding: '0 24px 16px',           // Optional padding
         }}
       >
-        <div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <Title level={3} style={{ margin: 0 }}>
+        <div style={{ display: 'flex'}}>
+          <div style={{ flexDirection: 'column' }}>
+            <Title level={5} style={{color: 'white'}}>
               VOICE PATHOLOGY DETECTION
+              <br/>
+              <Text style={{color: 'white'}}>Test your pathology</Text>
             </Title>
-            <div>Test your pathology</div>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <div style={{ marginRight: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', marginTop: '1%' }}>
+          <div style={{ marginRight: '30px' }}>
             <p>Welcome {username}</p>
           </div>
           <div>
