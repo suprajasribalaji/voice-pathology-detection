@@ -82,6 +82,7 @@ const UserTest = () => {
 
   
   const handlePageSwitch = () => {
+    nav('/userpage')
  
   };
 

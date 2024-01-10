@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { app, firestore } from '../../firebase-config';
+import { firestore } from '../../firebase-config';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { Button, Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../Authentication';
 
 const onFinish = (values) => {
   console.log('Success:', values);
@@ -16,6 +17,7 @@ const DoctorLogin = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const authenticate = useAuth();
 
   const handleLogin = async () => {
     const collectionRef = collection(firestore, 'DoctorDB');
@@ -28,8 +30,12 @@ const DoctorLogin = () => {
       );
 
       if (!querySnapshot.empty) {
-        message.success('User logged in successfully');
-        console.log('User logged in successfully');
+        message.success('Doctor logged in successfully');
+        const doctor = querySnapshot.docs[0].data();
+        const {name} = doctor;
+        console.log(name)
+        authenticate.doctorLogin(name);
+        console.log('Doctor logged in successfully',name);
         navigate('/doctor');
       } else {
         message.error('Invalid email or password');

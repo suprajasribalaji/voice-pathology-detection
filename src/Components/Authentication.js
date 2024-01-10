@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -6,17 +7,31 @@ export const AuthProvider = ({ children }) => {
   const [admin, setAdmin] = useState(null);
   const [doctor, setDoctor] = useState(null);
 
-  const userLogin = (userData) => {
-    setUser(userData);
+  const userLogin = async (userData) => {
+    setUser((prevUser) => {
+      console.log(userData); 
+      console.log(prevUser);
+      return userData; 
+    });
     console.log(user);
   };
 
   const adminLogin = (adminData) => {
-    setAdmin(adminData);
+    setAdmin((prevAdmin) => {
+      console.log(adminData); 
+      console.log(prevAdmin);
+      return adminData; 
+    });
+    console.log(doctor);
   };
 
   const doctorLogin = (doctorData) => {
-    setDoctor(doctorData);
+    setDoctor((prevDoctor) => {
+      console.log(doctorData); 
+      console.log(prevDoctor);
+      return doctorData; 
+    });
+    console.log(doctor);
   };
 
   const userLogout = () => {
@@ -24,6 +39,10 @@ export const AuthProvider = ({ children }) => {
     setAdmin(null);
     setDoctor(null);
   };
+
+  useEffect(() => {
+    console.log('Updated User:', user);
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{ user, admin, doctor, userLogin, adminLogin, doctorLogin, userLogout }}>
@@ -36,6 +55,5 @@ export const useAuth = () => {
   return useContext(AuthContext);
 };
 
-export const isAuthenticated = ({ user, admin, doctor }) => {
-  return !!user || !!admin || !!doctor;
-};
+
+export default AuthProvider;

@@ -1,4 +1,4 @@
-import { app, firestore } from '../../firebase-config';
+import { firestore } from '../../firebase-config';
 import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import React, { useState } from 'react';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
@@ -157,6 +157,8 @@ const UserLogin = () => {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState(''); 
   const [password, setPassword] = useState('');
+
+  const authenticate = useAuth();
   
   const Adduser = async (values) => {
     const { username, confirm, phone, gender, email } = values;
@@ -198,10 +200,13 @@ const UserLogin = () => {
       );
   
       if (!querySnapshot.empty) {
-        // userLogin(querySnapshot);
+        const user = querySnapshot.docs[0].data();
+        const { Username } = user;
+        console.log(Username)
+        authenticate.userLogin(Username);
         message.success('User logged in successfully');
   
-        // Redirect to the /userpage after successful login
+        
         navigate('/usertest');
   
         console.log('User logged in successfully');

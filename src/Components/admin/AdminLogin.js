@@ -3,12 +3,13 @@ import { app, firestore } from '../../firebase-config';
 import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { Button, Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../Authentication';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState(''); 
   const [password, setPassword] = useState('');
-
+  const authenticate = useAuth();
   const handleLogin = async () => {
     const collectionRef = collection(firestore, 'AdminDB');
     console.log(collectionRef);
@@ -21,6 +22,11 @@ const AdminLogin = () => {
   
       if (!querySnapshot.empty) {
         message.success('User logged in successfully');
+        const admin = querySnapshot.docs[0].data();
+        const {name} = admin;
+        console.log(name)
+        authenticate.adminLogin(name);
+        console.log('Admin logged in successfully',name);
         navigate('/usertest');
         console.log('User logged in successfully');
       } else {
