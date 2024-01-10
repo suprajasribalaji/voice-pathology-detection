@@ -17,7 +17,8 @@ const Booking = () => {
             Name: values.name,
             Email:values.email,
             Contact: values.contactnumber,
-            Age_Gender: values.age_gender,
+            Age: values.age,
+            Gender:values.gender,
             slot: slotTimestamp,
         };
 
@@ -25,7 +26,7 @@ const Booking = () => {
             const collectionRef = collection(firestore, 'CasesDB');
             await addDoc(collectionRef, dataToStore);
 
-            message.success('Case added successfully!');
+            message.success('Appointment Booked Successfully!');
             nav('/userpage');
             form.resetFields();
         } catch (error) {
@@ -103,18 +104,30 @@ const Booking = () => {
                 </Form.Item>
 
                 <Form.Item
-                    label="Age/Gender"
-                    name="age_gender"
+                    label="Age"
+                    name="age"
                     rules={[
                         {
                             required: true,
-                            message: 'Please Enter Age/Gender',
+                            message: 'Please Enter Age',
                         },
                     ]}
                 >
                     <Input />
                 </Form.Item>
 
+                <Form.Item
+                    label="Gender"
+                    name="gender"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please Enter Gender',
+                        }
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
                 <Form.Item
                     label="Select your time slot"
                     name="slot"

@@ -1,195 +1,220 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Input, Modal, Radio, Table } from 'antd';
+import { Button, Form, Input, Modal, Table, InputNumber, message } from 'antd';
+import moment from 'moment';
 import { useNavigate } from "react-router-dom";
-import { collection, getDocs } from 'firebase/firestore';  
+import { collection, getDocs } from 'firebase/firestore';
 import { firestore } from '../../firebase-config';
+import axios from 'axios';
+
+let formInstance;
 
 const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
     const [form] = Form.useForm();
+    formInstance = form;
+
+    useEffect(() => {
+        form.setFieldsValue({
+            reportDate: moment(),
+        });
+    }, [open]);
+
     return (
-      <Modal
-        open={open}
-        title="Evaluation Report"
-        okText="Generate"
-        cancelText="Cancel"
-        onCancel={onCancel}
-        onOk={() => {
-          form
-            .validateFields()
-            .then((values) => {
-              form.resetFields();
-              onCreate(values);
-            })
-            .catch((info) => {
-              console.log('Validate Failed:', info);
-            });
-        }}
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          name="form_in_modal"
-          initialValues={{
-            modifier: 'public',
-          }}
+        <Modal
+            visible={open}
+            title="Evaluation Report"
+            okText="Generate"
+            cancelText="Cancel"
+            onCancel={onCancel}
+            onOk={() => {
+                form
+                    .validateFields()
+                    .then((values) => {
+                        form.resetFields();
+                        onCreate(values);
+                    })
+                    .catch((info) => {
+                        console.log('Validate Failed:', info);
+                    });
+            }}
         >
-            <Form.Item
-            name="reportDate"
-            label="Report Date"
-            rules={[
-              {
-                tyoe: 'date',
-                required: true,
-                message: 'Please input the report date!',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
+            <Form
+                form={form}
+                layout="vertical"
+                name="form_in_modal"
+                initialValues={{
+                    modifier: 'public',
+                }}
+            >
+                <Form.Item
+                    name="reportDate"
+                    label="Report Date"
+                    rules={[
+                        {
+                            type: 'date',
+                            required: true,
+                            message: 'Please input the report date!',
+                        },
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
 
-          <Form.Item
-            name="patientName"
-            label="Patient Name"
-            rules={[
-              {
-                required: true,
-                message: 'Please input the patient name!',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
+                <Form.Item
+                    name="patientName"
+                    label="Patient Name"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input the patient name!',
+                        },
+                    ]}
+                    initialValue={''}
+                >
+                    <Input />
+                </Form.Item>
 
-          <Form.Item
-            name="patientage"
-            label="Patient Age"
-            rules={[
-              {
-                type: 'number',
-                required: true,
-                message: 'Please input the patient age!',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
+                <Form.Item
+                    name="patientage"
+                    label="Patient Age"
+                    rules={[
+                        {
+                            
+                            required: true,
+                            min:1,
+                            max:3, 
+                            message: 'Please input the patient age!',
+                        },
+                    ]}
+                >
+                    <InputNumber />
+                </Form.Item>
 
-          <Form.Item
-            name="dob"
-            label="DOB"
-            rules={[
-              {
-                required: true,
-                message: 'Please input the patient date of birth!',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
+                <Form.Item
+                    name="Email"
+                    label="Email"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please Enter your Mail!',
+                        },
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
 
-          <Form.Item
-            name="examiner"
-            label="Examiner"
-            rules={[
-              {
-                required: true,
-                message: 'Please input the examiner!',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
+                <Form.Item
+                    name="caseHistory"
+                    label="Case History"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input the case history!',
+                        },
+                    ]}
+                >
+                    <Input.TextArea />
+                </Form.Item>
 
-          <Form.Item 
-            name="caseHistory" 
-            label="Case History"
-            rules={[
-                {
-                    required: true,
-                    message: 'Please input the case history!',
-                }
-            ]}>
-            <Input type="textarea" />
-          </Form.Item>
+                <Form.Item
+                    name="assessmentFindings"
+                    label="Assessment Findings"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input the assessment findings!',
+                        },
+                    ]}
+                >
+                    <Input.TextArea />
+                </Form.Item>
 
-          <Form.Item 
-            name="assessmentFindings" 
-            label="Assessment Findings"
-            rules={[
-                {
-                    required: true,
-                    message: 'Please input the assessment findings!',
-                }
-            ]}>
-            <Input type="textarea" />
-          </Form.Item>
+                <Form.Item
+                    name="voiceEvaluation"
+                    label="Voice Evaluation"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input the voice evaluation!',
+                        },
+                    ]}
+                >
+                    <Input.TextArea />
+                </Form.Item>
 
-          <Form.Item 
-            name="voiceEvaluation" 
-            label="Voice Evaluation"
-            rules={[
-                {
-                    required: true,
-                    message: 'Please input the voice evaluation!',
-                }
-            ]}>
-            <Input type="textarea" />
-          </Form.Item>
+                <Form.Item
+                    name="fluencyEvaluation"
+                    label="Fluency Evaluation"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input the fluency evaluation!',
+                        },
+                    ]}
+                >
+                    <Input.TextArea />
+                </Form.Item>
 
-          <Form.Item 
-            name="fluencyEvaluation" 
-            label="Fluency Evaluation"
-            rules={[
-                {
-                    required: true,
-                    message: 'Please input the fluency evaluation!',
-                }
-            ]}>
-            <Input type="textarea" />
-          </Form.Item>
+                <Form.Item
+                    name="diagnosisImpression"
+                    label="Diagnosis Impression"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input the diagnosis impression!',
+                        },
+                    ]}
+                >
+                    <Input.TextArea />
+                </Form.Item>
 
-          <Form.Item 
-            name="diagnosisImpression" 
-            label="Diagnosis Impression"
-            rules={[
-                {
-                    required: true,
-                    message: 'Please input the diagnosis impression!',
-                }
-            ]}>
-            <Input type="textarea" />
-          </Form.Item>
-
-          <Form.Item 
-            name="prognosis" 
-            label="Prognosis"
-            rules={[
-                {
-                    required: true,
-                    message: 'Please input the prognosis!',
-                }
-            ]}>
-            <Input type="textarea" />
-          </Form.Item>
-        </Form>
-      </Modal>
+                <Form.Item
+                    name="prognosis"
+                    label="Prognosis"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input the prognosis!',
+                        },
+                    ]}
+                >
+                    <Input.TextArea />
+                </Form.Item>
+            </Form>
+        </Modal>
     );
-  };
+};
 
 const DoctorPage = () => {
     const navigate = useNavigate();
     const [isListCases, setListCases] = useState(false);
     const [casesDetails, setCasesDetails] = useState([]);
     const [open, setOpen] = useState(false);
-  
-    const onCreate = (values) => {
+
+    const Generate = async (values) => {
         console.log('Received values of form: ', values);
-        setOpen(false);
+        
+        try {
+            console.log("mailllll",values.Email);
+            const response = await axios.post('http://localhost:3001/send-email', {
+                to: values.Email,
+                subject: 'Evaluation Report',
+                text: `Patient Name: ${values.patientName}\nPatient Age: ${values.patientage}\nCase History: ${values.caseHistory}\nAssessment Findings: ${values.assessmentFindings}\nVoice Evaluation: ${values.voiceEvaluation}\nFluency Evaluation: ${values.fluencyEvaluation}\nDiagnosis Impression: ${values.diagnosisImpression}\nPrognosis: ${values.prognosis}`,
+            });
+
+            console.log(response.data);
+            if (response.status === 200) {
+                message.success("Mail Sent successfully");
+            }
+
+            setOpen(false);
+        } catch (error) {
+            console.error('Error sending email:', error);
+        }
     };
 
     const handleLogout = () => {
         navigate('/');
-    };  
+    };
 
     useEffect(() => {
         fetchData('CasesDB');
@@ -200,7 +225,7 @@ const DoctorPage = () => {
             const collectionRef = collection(firestore, collectionName);
             const querySnapshot = await getDocs(collectionRef);
             const data = querySnapshot.docs.map((doc) => ({
-                id: doc.id,  
+                id: doc.id,
                 ...doc.data(),
             }));
 
@@ -208,6 +233,26 @@ const DoctorPage = () => {
         } catch (error) {
             console.error(`Error fetching ${collectionName} data:`, error);
         }
+    };
+
+    const handlePick = (caseId) => {
+        console.log(`Picked case with ID: ${caseId}`);
+
+        const selectedPatient = casesDetails.find(patient => patient.id === caseId);
+
+        formInstance.setFieldsValue({
+            reportDate: moment(),
+            patientName: selectedPatient.Name || '',
+            patientage: selectedPatient.Age || '',
+            Email: selectedPatient.Email || '',
+        });
+
+        setOpen(true);
+    };
+
+    const listCases = () => {
+        setListCases(true);
+        fetchData('CasesDB');
     };
 
     const casesColumns = [
@@ -222,9 +267,14 @@ const DoctorPage = () => {
             key: 'Study_id',
         },
         {
-            title: 'Age/Gender',
-            dataIndex: 'Age_Gender',
-            key: 'Age_Gender',
+            title: 'Age',
+            dataIndex: 'Age',
+            key: 'Age',
+        },
+        {
+            title: 'Gender',
+            dataIndex: 'Gender',
+            key: 'Gender',
         },
         {
             title: 'Contact',
@@ -240,29 +290,19 @@ const DoctorPage = () => {
             title: 'Actions',
             key: 'actions',
             render: (text, record) => (
-                <div>  
+                <div>
                     <Button type="primary" onClick={() => handlePick(record.id)}>Pick</Button>
                     <CollectionCreateForm
                         open={open}
-                        onCreate={onCreate}
+                        onCreate={Generate}
                         onCancel={() => {
-                        setOpen(false);
+                            setOpen(false);
                         }}
                     />
-              </div>
+                </div>
             ),
         },
     ];
-
-    const handlePick = (caseId) => {
-        console.log(`Picked case with ID: ${caseId}`);
-        setOpen(true);
-    };
-
-    const listCases = () => {
-        setListCases(true);
-        fetchData('CasesDB');
-    };
 
     return (
         <div>
@@ -275,7 +315,6 @@ const DoctorPage = () => {
                 List Cases
             </Button>
 
-            {/* Render the casesDetails in a table */}
             {isListCases && (
                 <div>
                     <h3>Cases details</h3>
