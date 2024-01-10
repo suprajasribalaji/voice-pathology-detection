@@ -43,7 +43,7 @@ const DoctorDetails = () => {
                         <div>
                             <p>Years of Experience: {doctor.experience}</p>
                             <p>Specialization: {doctor.specialization}</p>
-                            <p>Contact: {doctor.email}</p>
+                            <p>Contact: {doctor.Email}</p>
                             <p>Clinic Address: {doctor.clinicAddress}</p>
                             <div style={{ marginTop: '2%' }}>
                                 <Button type="primary" onClick={handleConsult}>

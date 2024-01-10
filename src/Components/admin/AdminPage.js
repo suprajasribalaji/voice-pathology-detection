@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { collection, addDoc, getDocs,deleteDoc,doc } from 'firebase/firestore';
-import { Button, Form, Input, message, Modal, Space, Table,Popconfirm } from 'antd';
+import { Button, Form, Input, message, Modal, Space, Table,Popconfirm,Card } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { firestore } from '../../firebase-config';
 
@@ -310,46 +310,40 @@ const AdminPage = () => {
   };
 
   return (
-    <div style={{ marginLeft: '2%', marginRight: '2%', marginTop: '2%' }}>
-      <div>
-        <Space>
-          <h3>Admin Page</h3>
-          <Button onClick={handleLogout}>Logout</Button>
-        </Space>
-      </div>
-      <div>
-        <Space>
-          <Button type="primary" onClick={() => setOpen(true)}>
-            Add Doctors
-          </Button>
-          <Button type="primary" onClick={listDoctors}>
-            List Doctors
-          </Button>
-          <Button type="primary" onClick={listCases}>
-            List Cases
-          </Button>
-        </Space>
-        <CollectionCreateForm
-          open={open}
-          onCreate={onCreate}
-          onCancel={() => {
-            setOpen(false);
-          }}
-        />
-      </div>
-      {isListDoctors && (
-        <div>
-          <h3>Doctor's details</h3>
-          <Table columns={columns} dataSource={doctorDetails} />
-        </div>
-      )}
-      {isListCases && (
-        <div>
-          <h3>Cases details</h3>
-          <Table columns={casesColumns} dataSource={casesDetails} />
-        </div>
-      )}
-    </div>
+    <div style={{ margin: '2%' }}>
+    <Card title="Admin Page" extra={<Button onClick={handleLogout}>Logout</Button>}>
+      <Space>
+        <Button type="primary" onClick={() => setOpen(true)}>
+          Add Doctors
+        </Button>
+        <Button type="primary" onClick={listDoctors}>
+          List Doctors
+        </Button>
+        <Button type="primary" onClick={listCases}>
+          List Cases
+        </Button>
+      </Space>
+    </Card>
+
+    {isListDoctors && (
+      <Card title="Doctor's Details" style={{ marginTop: '2%' }}>
+        <Table columns={columns} dataSource={doctorDetails} />
+      </Card>
+    )}
+    {isListCases && (
+      <Card title="Cases Details" style={{ marginTop: '2%' }}>
+        <Table columns={casesColumns} dataSource={casesDetails} />
+      </Card>
+    )}
+
+    <CollectionCreateForm
+      open={open}
+      onCreate={onCreate}
+      onCancel={() => {
+        setOpen(false);
+      }}
+    />
+  </div>
   );
 };
 

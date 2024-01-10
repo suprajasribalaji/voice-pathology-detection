@@ -8,8 +8,6 @@ import Booking from './Components/consultation/Booking';
 import Payment from './Components/medication/Payment';
 import { AuthProvider, useAuth } from './Components/Authentication';
 import DoctorPage from './Components/doctor/Doctorpage';
-import DoctorLogin from './Components/doctor/DoctorLogin';
-
 function ProtectedRoute({ children, Element }) {
   const { user, admin, doctor } = useAuth();
   const navigate = useNavigate();
@@ -22,7 +20,7 @@ function ProtectedRoute({ children, Element }) {
       }
     };
 
-    if (Element === UserPage || Element === UserTest) {
+    if (Element === UserPage || Element === UserTest || Element === Booking) {
       checkAuthentication('user', user);
     } else if (Element === AdminPage || Element === 'AdminLogin') {
       checkAuthentication('admin', admin);
@@ -31,7 +29,7 @@ function ProtectedRoute({ children, Element }) {
     }
   }, [Element, user, admin, doctor, navigate]);
 
-  if (Element === UserPage || Element === UserTest) {
+  if (Element === UserPage || Element === UserTest || Element === Booking) {
     return user ? children : null;
   } else if (Element === AdminPage || Element === 'AdminLogin') {
     return admin ? children : null;

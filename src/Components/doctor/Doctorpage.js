@@ -304,7 +304,7 @@ const DoctorPage = () => {
             patientName: selectedPatient.Name || '',
             patientage: selectedPatient.Age || '',
             Email: selectedPatient.Email || '',
-            Contact:selectedPatient.Contact || '',  
+            Contact:`+91 ${selectedPatient.Contact || ''}`,
             Study_ID:selectedPatient.id||' '
         });
 
@@ -367,9 +367,9 @@ const DoctorPage = () => {
 
     return (
         <div>
-            <div>
-                Welcome {doctorname}.!!
-                <Button type="primary" onClick={handleLogout} style={{ marginLeft: '3%' }}>Logout</Button>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h2>Welcome {doctorname}!</h2>
+                <Button type="primary" onClick={handleLogout}>Logout</Button>
             </div>
 
             <Button type="primary" onClick={listCases}>
