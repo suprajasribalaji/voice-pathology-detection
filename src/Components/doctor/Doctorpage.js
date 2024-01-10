@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Form, Input, Modal, Table, InputNumber, message } from 'antd';
 import moment from 'moment';
 import { useNavigate } from "react-router-dom";
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs ,doc,deleteDoc} from 'firebase/firestore';
 import { firestore } from '../../firebase-config';
 import axios from 'axios';
 
@@ -96,6 +96,18 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
                         {
                             required: true,
                             message: 'Please Enter your Mail!',
+                        },
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
+                <Form.Item
+                    name="Study_ID"
+                    label="Study_ID"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please Enter your Study_ID!',
                         },
                     ]}
                 >
@@ -205,6 +217,7 @@ const DoctorPage = () => {
 
     const Generate = async (values) => {
         console.log('Received values of form: ', values);
+        
     
         try {
             
@@ -224,12 +237,25 @@ const DoctorPage = () => {
                 to: values.Contact, 
                 text: 'Your Report has been Generated. Check the Mail Now ',
             });
-    
+            
             console.log('SMS Response:', smsResponse.data);
             if(smsResponse.status===201)
             {
                 message.success("Message Sent Succesfully")
             }
+            message.success("Case Completed Successfully")
+
+            const caseRef = doc(firestore, 'CasesDB', values.Study_ID);
+        console.log('Case Reference: ', caseRef);
+
+        await deleteDoc(caseRef);
+
+        console.log('Case deleted successfully.');
+
+        message.success('Case deleted successfully.');
+
+
+
     
             setOpen(false);
         } catch (error) {
@@ -274,7 +300,8 @@ const DoctorPage = () => {
             patientName: selectedPatient.Name || '',
             patientage: selectedPatient.Age || '',
             Email: selectedPatient.Email || '',
-            Contact:selectedPatient.Contact || ''
+            Contact:selectedPatient.Contact || '',  
+            Study_ID:selectedPatient.id||' '
         });
 
         setOpen(true);
