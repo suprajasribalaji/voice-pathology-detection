@@ -114,7 +114,7 @@ const UserTest = () => {
       </div>
 
     
-      <div style={{ justifyContent: 'center', marginTop: '3%', padding: '10%', paddingTop: '10%' }}>
+      <div style={{ justifyContent: 'center', padding: '10%', marginTop: '4%' }}>
         <Row>
           <Col>
             <div>
