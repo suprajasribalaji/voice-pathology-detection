@@ -6,11 +6,15 @@ import { app } from '../../firebase-config';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../Authentication";
 
 const { Title, Text } = Typography;
 
 const UserTest = () => {
   
+  const authenticate = useAuth();
+  const username = authenticate.user;
+  console.log(username);
   const storage = getStorage(app);
   const storageRef = ref(storage, 'VoicesDB');
 
@@ -104,7 +108,7 @@ const UserTest = () => {
     
       <div style={{ marginTop: '1%', marginLeft: '82%' }}>
         <Space>
-          <Text type="secondary">Welcome Supraja</Text>
+          <Text type="secondary">Welcome {username}</Text>
           <Button type="primary" onClick={handleLogout} style={{ marginLeft: '25%' }}>Logout</Button>
         </Space>
       </div>

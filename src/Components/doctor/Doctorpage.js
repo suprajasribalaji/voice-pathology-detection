@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { collection, getDocs ,doc,deleteDoc} from 'firebase/firestore';
 import { firestore } from '../../firebase-config';
 import axios from 'axios';
+import { useAuth } from "../Authentication";
 
 let formInstance;
 
@@ -210,6 +211,9 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
 };
 
 const DoctorPage = () => {
+
+    const authenticate = useAuth();
+    const doctorname = authenticate.doctor;
     const navigate = useNavigate();
     const [isListCases, setListCases] = useState(false);
     const [casesDetails, setCasesDetails] = useState([]);
@@ -364,7 +368,7 @@ const DoctorPage = () => {
     return (
         <div>
             <div>
-                Welcome Doctor!
+                Welcome {doctorname}.!!
                 <Button type="primary" onClick={handleLogout} style={{ marginLeft: '3%' }}>Logout</Button>
             </div>
 

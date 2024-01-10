@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Layout, Menu, theme } from 'antd';
-
+import { useAuth } from '../Authentication';
 import DoctorDetails from '../consultation/DoctorDetails';
 import Medisync from '../medication/Medisync';
 import { useNavigate } from 'react-router-dom';
@@ -19,6 +19,10 @@ const sideMenuItems = [
 ];
 
 const UserPage = () => {
+  const authenticate = useAuth();
+  const username = authenticate.user;
+  console.log(username);
+
   const navigate = useNavigate();
 
   const [selectedMenuItem, setSelectedMenuItem] = useState('1'); 
@@ -53,7 +57,7 @@ const UserPage = () => {
             </div>
           </div>
           <div>
-            <p>Welcome Supraja</p>
+            <p>Welcome S{username}</p>
           </div>
           <div>
             <Button type='primary' onClick={handleLogout}>Logout</Button>
