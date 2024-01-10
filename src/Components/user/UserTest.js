@@ -108,7 +108,7 @@ const UserTest = () => {
     
       <div style={{ marginTop: '1%', marginLeft: '82%' }}>
         <Space>
-          <Text type="secondary">Welcome {username}</Text>
+          <Text type="primary">Welcome {username}</Text>
           <Button type="primary" onClick={handleLogout} style={{ marginLeft: '25%' }}>Logout</Button>
         </Space>
       </div>

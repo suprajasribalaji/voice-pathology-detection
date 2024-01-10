@@ -1,31 +1,31 @@
 import React, { useState } from 'react';
-import { Button, Layout, Menu, theme } from 'antd';
+import { Button, Layout, Menu, Typography, theme } from 'antd';
 import { useAuth } from '../Authentication';
 import DoctorDetails from '../consultation/DoctorDetails';
 import Medisync from '../medication/Medisync';
 import { useNavigate } from 'react-router-dom';
 
 const { Header, Content, Footer, Sider } = Layout;
+const { Title } = Typography;
 
 const sideMenuItems = [
   {
-    key: 1,
-    label: "Doctor Consultation",
+    key: '1',
+    label: 'Doctor Consultation',
   },
   {
-    key: 2,
-    label: "Medisync",
+    key: '2',
+    label: 'Medisync',
   },
 ];
 
 const UserPage = () => {
   const authenticate = useAuth();
   const username = authenticate.user;
-  console.log(username);
 
   const navigate = useNavigate();
 
-  const [selectedMenuItem, setSelectedMenuItem] = useState('1'); 
+  const [selectedMenuItem, setSelectedMenuItem] = useState('1');
 
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -34,35 +34,41 @@ const UserPage = () => {
   const onChange = (value) => {
     setSelectedMenuItem(value.key);
   };
-  
+
   const handleLogout = () => {
     navigate('/');
-  }
+  };
 
   return (
     <Layout>
       <Header
         style={{
-          color:'white',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          color: 'white',
           paddingBottom: '10%',
+          justifyContent: 'center',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center'}}>
-          <div style={{display: 'flex', flexDirection: 'column'}}>
-            <div>
+        <div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <Title level={3} style={{ margin: 0 }}>
               VOICE PATHOLOGY DETECTION
-            </div>
-            <div>
-              Test your pathology
-            </div>
+            </Title>
+            <div>Test your pathology</div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ marginRight: '10px' }}>
+            <p>Welcome {username}</p>
           </div>
           <div>
-            <p>Welcome S{username}</p>
+            <Button type="primary" onClick={handleLogout}>
+              Logout
+            </Button>
           </div>
-          <div>
-            <Button type='primary' onClick={handleLogout}>Logout</Button>
-          </div>
-        </div> 
+        </div>
       </Header>
       <Content
         style={{
@@ -75,7 +81,7 @@ const UserPage = () => {
             padding: '24px 0',
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
-            height: '100%', 
+            height: '100%',
           }}
         >
           <Sider
@@ -93,9 +99,7 @@ const UserPage = () => {
               onClick={onChange}
             >
               {sideMenuItems.map((item) => (
-                <Menu.Item key={item.key}>
-                  {item.label}
-                </Menu.Item>
+                <Menu.Item key={item.key}>{item.label}</Menu.Item>
               ))}
             </Menu>
           </Sider>
