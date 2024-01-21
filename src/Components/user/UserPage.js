@@ -43,12 +43,12 @@ const UserPage = () => {
     <Layout>
       <Header
         style={{
-          backgroundColor: '#001529', // Set your desired background color
-          color: 'white',             // Set the text color
+          backgroundColor: '#001529', 
+          color: 'white',            
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '0 24px 16px',           // Optional padding
+          padding: '0 24px 16px',          
         }}
       >
         <div style={{ display: 'flex'}}>
@@ -94,7 +94,7 @@ const UserPage = () => {
             <Menu
               mode="inline"
               selectedKeys={[selectedMenuItem]}
-              style={{
+              style={{ 
                 height: '100%',
               }}
               onClick={onChange}

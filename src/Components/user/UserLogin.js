@@ -67,7 +67,7 @@ const CollectionCreateForm = ({ open, Adduser, onCancel }) => {
           rules={[
             {
               type: 'email',
-              message: 'The input is not valid E-mail!',
+              message: 'The input is not valid E-mail!!',
             },
             {
               required: true,

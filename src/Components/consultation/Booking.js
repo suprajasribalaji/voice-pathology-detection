@@ -1,10 +1,10 @@
 import React from 'react';
-import { Button, Form, Input, DatePicker, message, Typography, InputNumber, Select, Space, Row, Col } from 'antd';
+import { Button, Form, Input, DatePicker, message, Typography, Select, Space } from 'antd';
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
 import { firestore } from '../../firebase-config';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Authentication';
-
+import axios from 'axios';
 const { Title, Text } = Typography;
 const { Option } = Select;
 
@@ -22,8 +22,8 @@ const Booking = () => {
 
   const onFinish = async (values) => {
     console.log('Received values of form:', values);
-
     const slotTimestamp = Timestamp.fromDate(values.slot.toDate());
+
 
     const dataToStore = {
       Name: values.name,
@@ -38,9 +38,18 @@ const Booking = () => {
       const collectionRef = collection(firestore, 'CasesDB');
       await addDoc(collectionRef, dataToStore);
 
+      const bookresponse = await axios.post("http://localhost:3001/send-email-doctor",{
+        to:values.email,
+        subject:'New Case',
+        text:`Patient Name:${values.name} \nPatient Email:${values.email}\nPatient Contact Number:${values.contactnumber}\nPatient Gender:${values.gender}\nTime Slot:${values.slot}`
+      })
+
+      if(bookresponse.status===200)
+      {
       message.success('Appointment Booked Successfully!');
-      nav('/userpage');
+      nav('/userpage')
       form.resetFields();
+      }
     } catch (error) {
       console.error('Error adding Case:', error);
       message.error('Failed to add Case. Please try again.');
@@ -152,7 +161,7 @@ const Booking = () => {
                         },
                     ]}
                 >
-                    <InputNumber min={1} max={120} />
+                    <Input/>
                 </Form.Item>
 
                 <Form.Item

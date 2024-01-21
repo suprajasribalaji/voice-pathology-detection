@@ -6,6 +6,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [admin, setAdmin] = useState(null);
   const [doctor, setDoctor] = useState(null);
+  const [current_doctor,setCurrent_doctor] = useState(null);
 
   const userLogin = async (userData) => {
     setUser((prevUser) => {
@@ -40,12 +41,23 @@ export const AuthProvider = ({ children }) => {
     setDoctor(null);
   };
 
+  const setcurrentDoctor =(current_doctor)=>{
+
+    setCurrent_doctor((prevcurrDoctor) => {
+      console.log(current_doctor); 
+      console.log(prevcurrDoctor);
+      return current_doctor; 
+    });
+    console.log(current_doctor);
+
+  }
+
   useEffect(() => {
     console.log('Updated User:', user);
   }, [user]);
 
   return (
-    <AuthContext.Provider value={{ user, admin, doctor, userLogin, adminLogin, doctorLogin, userLogout }}>
+    <AuthContext.Provider value={{ user, admin, doctor, userLogin, adminLogin, doctorLogin, userLogout,setcurrentDoctor,current_doctor }}>
       {children}
     </AuthContext.Provider>
   );

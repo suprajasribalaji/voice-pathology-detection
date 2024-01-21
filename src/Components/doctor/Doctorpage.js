@@ -87,7 +87,7 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
                         },
                     ]}
                 >
-                    <InputNumber />
+                    <Input />
                 </Form.Item>
 
                 <Form.Item

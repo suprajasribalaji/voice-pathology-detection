@@ -45,6 +45,27 @@ app.post('/send-email', async (req, res) => {
 
 
 
+app.post('/send-email-doctor', async (req, res) => {
+    const { to, subject, text } = req.body;
+    console.log("data",req.body);
+
+    const mailOptions = {
+        from: 'suprjasri.balaji@gmail.com',
+        to,
+        subject,
+        text,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return res.status(500).send(error.toString());
+        }
+        res.status(200).send('Email sent: ' + info.response);
+    });
+});
+
+
+
 
 const accountSid = 'ACf5787791227c22c6cbf37b3058d31729';
 const authToken = '87a552f713e8f4e2ac7de4a8449026c1';
