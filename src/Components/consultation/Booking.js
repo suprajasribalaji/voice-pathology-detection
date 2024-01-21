@@ -17,6 +17,8 @@ const genderOptions = [
 const Booking = () => {
   const authenticate = useAuth();
   const username = authenticate.user;
+  const doctormail = authenticate.current_doctor_mail;
+  const doctorname = authenticate.doctor_name;
   const [form] = Form.useForm();
   const nav = useNavigate();
 
@@ -24,6 +26,7 @@ const Booking = () => {
     console.log('Received values of form:', values);
     const slotTimestamp = Timestamp.fromDate(values.slot.toDate());
 
+    console.log("doctor mail",doctormail);
 
     const dataToStore = {
       Name: values.name,
@@ -39,8 +42,8 @@ const Booking = () => {
       await addDoc(collectionRef, dataToStore);
 
       const bookresponse = await axios.post("http://localhost:3001/send-email-doctor",{
-        to:values.email,
-        subject:'New Case',
+        to:doctormail,
+        subject:`Hi Dr.${doctorname} You Have A New Case`,
         text:`Patient Name:${values.name} \nPatient Email:${values.email}\nPatient Contact Number:${values.contactnumber}\nPatient Gender:${values.gender}\nTime Slot:${values.slot}`
       })
 

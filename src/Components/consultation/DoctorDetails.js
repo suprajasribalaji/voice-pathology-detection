@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Card, Divider, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { firestore } from '../../firebase-config';
-import { collection, doc, getDocs } from 'firebase/firestore';
+import { collection,  getDocs } from 'firebase/firestore';
 import { useAuth } from '../Authentication';
 
 const { Title } = Typography;
@@ -11,9 +11,6 @@ const DoctorDetails = () => {
     const navigate = useNavigate();
     const [doctors, setDoctors] = useState([]);
     const authenticate = useAuth();
-
-    
-
 
     useEffect(() => {
         
@@ -32,8 +29,9 @@ const DoctorDetails = () => {
         fetchDoctors();
     }, []);
 
-    const handleConsult = (email) => {
+    const handleConsult = (email,name) => {
         authenticate.setcurrentDoctor(email);
+        authenticate.setdoctorname(name);
         navigate('/bookappointment');
     };
 
@@ -50,7 +48,7 @@ const DoctorDetails = () => {
                             <p>Contact: {doctor.Email}</p>
                             <p>Clinic Address: {doctor.clinicAddress}</p>
                             <div style={{ marginTop: '2%' }}>
-                                <Button type="primary" onClick={() => handleConsult(doctor.Email)}>
+                                <Button type="primary" onClick={() => handleConsult(doctor.Email,doctor.name)}>
                                     Book Appointment
                                 </Button>
                             </div>
