@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Input, Modal, Table, InputNumber, message } from 'antd';
+import { Button, Form, Input, Modal, Table, message } from 'antd';
 import moment from 'moment';
 import { useNavigate } from "react-router-dom";
-import { collection, getDocs ,doc,deleteDoc} from 'firebase/firestore';
+import { collection, getDocs, doc, where, query, updateDoc } from 'firebase/firestore';
 import { firestore } from '../../firebase-config';
 import axios from 'axios';
 import { useAuth } from "../Authentication";
@@ -30,7 +30,6 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
                 form
                     .validateFields()
                     .then((values) => {
-                        form.resetFields();
                         onCreate(values);
                     })
                     .catch((info) => {
@@ -79,10 +78,10 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
                     label="Patient Age"
                     rules={[
                         {
-                            
+
                             required: true,
-                            min:1,
-                            max:3, 
+                            min: 1,
+                            max: 3,
                             message: 'Please input the patient age!',
                         },
                     ]}
@@ -213,108 +212,89 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
 const DoctorPage = () => {
 
     const authenticate = useAuth();
-    const doctorname = authenticate.doctor;
+    const doctorname = authenticate.doctor.name;
+    const doctormail = authenticate.doctor.email;
     const navigate = useNavigate();
-    const [isListCases, setListCases] = useState(false);
     const [casesDetails, setCasesDetails] = useState([]);
     const [open, setOpen] = useState(false);
 
     const Generate = async (values) => {
-        console.log('Received values of form: ', values);
-        
-    
         try {
-            
-            const emailResponse = await axios.post('http://localhost:3001/send-email', {
+
+            const emailResponse = await axios.post('http://localhost:3001/send-email-report', {
                 to: values.Email,
                 subject: 'Evaluation Report',
                 text: `Patient Name: ${values.patientName}\nPatient Age: ${values.patientage}\nCase History: ${values.caseHistory}\nAssessment Findings: ${values.assessmentFindings}\nVoice Evaluation: ${values.voiceEvaluation}\nFluency Evaluation: ${values.fluencyEvaluation}\nDiagnosis Impression: ${values.diagnosisImpression}\nPrognosis: ${values.prognosis}`,
             });
-    
-            console.log('Email Response:', emailResponse.data);
+
             if (emailResponse.status === 200) {
                 message.success('Email Sent successfully');
             }
-    
-            
+
             const smsResponse = await axios.post('http://localhost:3001/send-sms', {
-                to: values.Contact, 
-                text: 'Your Report has been Generated. Check the Mail Now ',
+                to: values.Contact,
+                text: 'Your Report has been Generated. Kindly check the Mail Now ',
             });
-            
-            console.log('SMS Response:', smsResponse.data);
-            if(smsResponse.status===201)
-            {
+
+            if (smsResponse.status === 201) {
                 message.success("Message Sent Succesfully")
             }
             message.success("Case Completed Successfully")
-
             const caseRef = doc(firestore, 'CasesDB', values.Study_ID);
-        console.log('Case Reference: ', caseRef);
-
-        await deleteDoc(caseRef);
-
-        console.log('Case deleted successfully.');
-
-        message.success('Case deleted successfully.');
-
-
-
-    
+            await updateDoc(caseRef, { caseStatus: `Completed By DR.${doctorname}`});
             setOpen(false);
         } catch (error) {
             console.error('Error sending email and SMS:', error);
         }
     };
-    
 
 
-    
+
+
 
     const handleLogout = () => {
         navigate('/');
     };
 
-    useEffect(() => {
-        fetchData('CasesDB');
-    }, [isListCases]);
-
     const fetchData = async (collectionName) => {
         try {
             const collectionRef = collection(firestore, collectionName);
-            const querySnapshot = await getDocs(collectionRef);
+            const querySnapshot = await getDocs(
+                query(
+                    collectionRef,
+                    where('Assigned_to', '==', doctormail),
+                     where('caseStatus', '==', 'Not Completed')
+                )
+            );
             const data = querySnapshot.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data(),
             }));
-
             setCasesDetails(data);
         } catch (error) {
             console.error(`Error fetching ${collectionName} data:`, error);
         }
     };
+    
+    useEffect(() => {
+        fetchData('CasesDB');
+    }, [Generate]);
+
 
     const handlePick = (caseId) => {
-        console.log(`Picked case with ID: ${caseId}`);
-
         const selectedPatient = casesDetails.find(patient => patient.id === caseId);
-
         formInstance.setFieldsValue({
             reportDate: moment(),
             patientName: selectedPatient.Name || '',
             patientage: selectedPatient.Age || '',
             Email: selectedPatient.Email || '',
-            Contact:`+91 ${selectedPatient.Contact || ''}`,
-            Study_ID:selectedPatient.id||' '
+            Contact: `+91 ${selectedPatient.Contact || ''}`,
+            Study_ID: selectedPatient.id || ' '
         });
-
         setOpen(true);
     };
 
-    const listCases = () => {
-        setListCases(true);
-        fetchData('CasesDB');
-    };
+
 
     const casesColumns = [
         {
@@ -369,19 +349,14 @@ const DoctorPage = () => {
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h2>Welcome {doctorname}!</h2>
+                <h2>Assigned Cases</h2>
                 <Button type="primary" onClick={handleLogout}>Logout</Button>
             </div>
+            <div>
+                <h3>Cases details</h3>
+                <Table columns={casesColumns} dataSource={casesDetails} />
+            </div>
 
-            <Button type="primary" onClick={listCases}>
-                List Cases
-            </Button>
-
-            {isListCases && (
-                <div>
-                    <h3>Cases details</h3>
-                    <Table columns={casesColumns} dataSource={casesDetails} />
-                </div>
-            )}
         </div>
     );
 };

@@ -21,10 +21,7 @@ const DoctorLogin = () => {
 
   const handleLogin = async () => {
     const collectionRef = collection(firestore, 'DoctorDB');
-    console.log(collectionRef);
-
     try {
-      console.log(email, password);
       const querySnapshot = await getDocs(
         query(collectionRef, where('Email', '==', email), where('Password', '==', password))
       );
@@ -32,10 +29,8 @@ const DoctorLogin = () => {
       if (!querySnapshot.empty) {
         message.success('Doctor logged in successfully');
         const doctor = querySnapshot.docs[0].data();
-        const {name} = doctor;
-        console.log(name)
-        authenticate.doctorLogin(name);
-        console.log('Doctor logged in successfully',name);
+        const {name,Email} = doctor;
+        authenticate.doctorLogin(name,Email);
         navigate('/doctor');
       } else {
         message.error('Invalid email or password');

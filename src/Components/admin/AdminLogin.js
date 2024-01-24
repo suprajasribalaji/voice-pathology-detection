@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { app, firestore } from '../../firebase-config';
-import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import {  firestore } from '../../firebase-config';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { Button, Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Authentication';
@@ -12,26 +12,18 @@ const AdminLogin = () => {
   const authenticate = useAuth();
   const handleLogin = async () => {
     const collectionRef = collection(firestore, 'AdminDB');
-    console.log(collectionRef);
-  
     try {
-    console.log(email,password);
       const querySnapshot = await getDocs(
         query(collectionRef, where('Email', '==', email), where('Password', '==', password))
       );
   
       if (!querySnapshot.empty) {
-        message.success('User logged in successfully');
+        message.success('Admin logged in successfully');
         const admin = querySnapshot.docs[0].data();
         const {name} = admin;
-        console.log(name)
         authenticate.adminLogin(name);
-        console.log('Admin logged in successfully',name);
-        navigate('/usertest');
-        console.log('User logged in successfully');
       } else {
         message.error('Invalid email or password');
-        console.log('Invalid email or password');
       }
     } catch (error) {
       console.error('Error logging in:', error.message);

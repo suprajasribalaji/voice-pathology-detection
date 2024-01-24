@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { collection, addDoc, getDocs,deleteDoc,doc } from 'firebase/firestore';
-import { Button, Form, Input, message, Modal, Space, Table,Popconfirm,Card } from 'antd';
+import { collection, addDoc, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { Button, Form, Input, message, Modal, Space, Table, Popconfirm, Card } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { firestore } from '../../firebase-config';
+import axios from 'axios'
 
 const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
   const [form] = Form.useForm();
@@ -50,8 +51,34 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
         </Form.Item>
 
         <Form.Item
+          name="Email"
+          label="Email ID"
+          rules={[
+            {
+              required: true,
+              message: 'Please input Mail ID!',
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          name="contactNumber"
+          label="Contact Number"
+          rules={[
+            {
+              required: true,
+              message: 'Please input contact number!',
+            },
+          ]}
+        >
+          <Input type="telephone"/>
+        </Form.Item>
+
+        <Form.Item
           name="Password"
-          label="Password_For_Doctor"
+          label="Set Password For Doctor"
           rules={[
             {
               required: true,
@@ -59,7 +86,7 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
             },
           ]}
         >
-          <Input type="number" />
+          <Input type="password" />
         </Form.Item>
 
         <Form.Item
@@ -89,32 +116,6 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
         </Form.Item>
 
         <Form.Item
-          name="Email"
-          label="Email ID"
-          rules={[
-            {
-              required: true,
-              message: 'Please input Mail ID!',
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
-          name="contactNumber"
-          label="Contact Number"
-          rules={[
-            {
-              required: true,
-              message: 'Please input contact number!',
-            },
-          ]}
-        >
-          <Input type="number" />
-        </Form.Item>
-
-        <Form.Item
           name="clinicAddress"
           label="Address of Clinic"
           rules={[
@@ -140,18 +141,25 @@ const AdminPage = () => {
   const [doctorDetails, setDoctorDetails] = useState([]);
   const [casesDetails, setCasesDetails] = useState([]);
 
-  const onCreate = async (values) => {
+  const handleCreatenewDoctor = async (values) => {
     try {
       const collectionRef = collection(firestore, 'DoctorDB');
       await addDoc(collectionRef, values);
-
       const querySnapshot = await getDocs(collectionRef);
       const updatedDoctorDetails = querySnapshot.docs.map((doc) => doc.data());
-
       setDoctorDetails(updatedDoctorDetails);
+      const newaccount_mail = await axios.post("http://localhost:3001/send-mail-newaccount-doctor", {
+        to: values.Email,
+        subject: `Welcome Dr.${values.name} Your New Account Has Been Created..!!`,
+        text: `Note Please Keep your ACCESS CREDIENTIALS in Secure Manner \n Gmail:${values.Email}\n Password:${values.Password}`,
+      })
       setOpen(false);
-
-      message.success('Doctor added successfully!');
+      if (newaccount_mail.status === 200) {
+        message.success('Doctor added successfully!');
+      }
+      else {
+        console.error("Errorrrrrrr")
+      }
     } catch (error) {
       console.error('Error adding doctor:', error);
       message.error('Failed to add doctor. Please try again.');
@@ -163,9 +171,8 @@ const AdminPage = () => {
     try {
       const collectionRef = collection(firestore, 'DoctorDB');
       await deleteDoc(doc(collectionRef, record.id));
-
       message.success('Doctor deleted successfully!');
-      fetchData('DoctorDB'); 
+      fetchData('DoctorDB');
     } catch (error) {
       console.error('Error deleting doctor:', error);
       message.error('Failed to delete doctor. Please try again.');
@@ -178,10 +185,9 @@ const AdminPage = () => {
       const collectionRef = collection(firestore, collectionName);
       const querySnapshot = await getDocs(collectionRef);
       const data = querySnapshot.docs.map((doc) => ({
-        id: doc.id,  
+        id: doc.id,
         ...doc.data(),
       }));
-  
       if (collectionName === 'DoctorDB') {
         setDoctorDetails(data);
       } else if (collectionName === 'CasesDB') {
@@ -191,7 +197,7 @@ const AdminPage = () => {
       console.error(`Error fetching ${collectionName} data:`, error);
     }
   };
-  
+
   useEffect(() => {
     fetchData('DoctorDB');
   }, [isListDoctors]);
@@ -241,7 +247,7 @@ const AdminPage = () => {
       key: 'action',
       render: (text, record) => (
         <Space size="middle">
-         
+
           <Popconfirm
             title="Are you sure you want to delete this doctor?"
             onConfirm={() => handleDelete(record)}
@@ -255,9 +261,9 @@ const AdminPage = () => {
         </Space>
       ),
     },
-  
+
   ];
-  
+
   const casesColumns = [
     {
       title: 'Name',
@@ -270,9 +276,14 @@ const AdminPage = () => {
       key: 'Study_id',
     },
     {
-      title: 'Age/Gender',
-      dataIndex: 'Age_Gender',
-      key: 'Age_Gender',
+      title: 'Age',
+      dataIndex: 'Age',
+      key: 'Age',
+    },
+    {
+      title: 'Gender',
+      dataIndex: 'Gender',
+      key: 'Gender',
     },
     {
       title: 'Contact',
@@ -285,13 +296,20 @@ const AdminPage = () => {
       key: 'Email',
     },
     {
-      title: 'Status',
-      dataIndex: 'Activated',
-      key: 'Activated',
+      title: 'Assigned To',
+      dataIndex: 'Assigned_to',
+      key: 'Assigned_to',
     },
-
-
-
+    {
+      title: 'Case Status',
+      dataIndex: 'caseStatus',
+      key: 'caseStatus',
+      render: (text, record) => (
+        <span style={{ color: record.caseStatus === 'Not Completed' ? 'red' : 'green' }}>
+          {text}
+        </span>
+      ),
+    },
   ];
 
   const listDoctors = () => {
@@ -311,39 +329,39 @@ const AdminPage = () => {
 
   return (
     <div style={{ margin: '2%' }}>
-    <Card title="Admin Page" extra={<Button onClick={handleLogout}>Logout</Button>}>
-      <Space>
-        <Button type="primary" onClick={() => setOpen(true)}>
-          Add Doctors
-        </Button>
-        <Button type="primary" onClick={listDoctors}>
-          List Doctors
-        </Button>
-        <Button type="primary" onClick={listCases}>
-          List Cases
-        </Button>
-      </Space>
-    </Card>
-
-    {isListDoctors && (
-      <Card title="Doctor's Details" style={{ marginTop: '2%' }}>
-        <Table columns={columns} dataSource={doctorDetails} />
+      <Card title="Admin Page" extra={<Button onClick={handleLogout}>Logout</Button>}>
+        <Space>
+          <Button type="primary" onClick={() => setOpen(true)}>
+            Add Doctors
+          </Button>
+          <Button type="primary" onClick={listDoctors}>
+            List Doctors
+          </Button>
+          <Button type="primary" onClick={listCases}>
+            List Cases
+          </Button>
+        </Space>
       </Card>
-    )}
-    {isListCases && (
-      <Card title="Cases Details" style={{ marginTop: '2%' }}>
-        <Table columns={casesColumns} dataSource={casesDetails} />
-      </Card>
-    )}
 
-    <CollectionCreateForm
-      open={open}
-      onCreate={onCreate}
-      onCancel={() => {
-        setOpen(false);
-      }}
-    />
-  </div>
+      {isListDoctors && (
+        <Card title="Doctor's Details" style={{ marginTop: '2%' }}>
+          <Table columns={columns} dataSource={doctorDetails} />
+        </Card>
+      )}
+      {isListCases && (
+        <Card title="Cases Details" style={{ marginTop: '2%' }}>
+          <Table columns={casesColumns} dataSource={casesDetails} />
+        </Card>
+      )}
+
+      <CollectionCreateForm
+        open={open}
+        onCreate={handleCreatenewDoctor}
+        onCancel={() => {
+          setOpen(false);
+        }}
+      />
+    </div>
   );
 };
 

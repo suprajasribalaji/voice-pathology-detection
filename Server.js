@@ -24,10 +24,8 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-app.post('/send-email', async (req, res) => {
+app.post('/send-email-report', async (req, res) => {
     const { to, subject, text } = req.body;
-    console.log("data",req.body);
-
     const mailOptions = {
         from: 'suprjasri.balaji@gmail.com',
         to,
@@ -45,11 +43,9 @@ app.post('/send-email', async (req, res) => {
 
 
 
-app.post('/send-email-doctor', async (req, res) => {
+app.post('/send-email-newcase-doctor', async (req, res) => {
     const { to, subject, text } = req.body;
-    console.log("data",req.body);
-
-    const mailOptions = {
+     const mailOptions = {
         from: 'suprjasri.balaji@gmail.com',
         to,
         subject,
@@ -64,6 +60,24 @@ app.post('/send-email-doctor', async (req, res) => {
     });
 });
 
+app.post('/send-mail-newaccount-doctor',async(req,res)=>{
+    const {to,subject,text} = req.body;
+    const mailOptions = {
+        from:'suprjasri.balaji@gmail.com',
+        to,
+        subject,
+        text,
+
+    };
+
+    transporter.sendMail(mailOptions,(error,info)=>{
+        if(error){
+            return res.status(500);
+        }
+        res.status(200).send('Email Sent'+info.response)
+    })
+
+})
 
 
 

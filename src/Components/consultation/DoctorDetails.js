@@ -29,9 +29,8 @@ const DoctorDetails = () => {
         fetchDoctors();
     }, []);
 
-    const handleConsult = (email,name) => {
-        authenticate.setcurrentDoctor(email);
-        authenticate.setdoctorname(name);
+    const handleBook = (name,email) => {
+        authenticate.setCurrentDoctor(name,email);
         navigate('/bookappointment');
     };
 
@@ -48,7 +47,7 @@ const DoctorDetails = () => {
                             <p>Contact: {doctor.Email}</p>
                             <p>Clinic Address: {doctor.clinicAddress}</p>
                             <div style={{ marginTop: '2%' }}>
-                                <Button type="primary" onClick={() => handleConsult(doctor.Email,doctor.name)}>
+                                <Button type="primary" onClick={() => handleBook(doctor.name,doctor.Email)}>
                                     Book Appointment
                                 </Button>
                             </div>

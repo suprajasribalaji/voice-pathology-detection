@@ -17,31 +17,30 @@ const genderOptions = [
 const Booking = () => {
   const authenticate = useAuth();
   const username = authenticate.user;
-  const doctormail = authenticate.current_doctor_mail;
-  const doctorname = authenticate.doctor_name;
+  const doctormail = authenticate.current_doctor.email;
+  const doctorname = authenticate.current_doctor.name;
   const [form] = Form.useForm();
   const nav = useNavigate();
 
-  const onFinish = async (values) => {
-    console.log('Received values of form:', values);
+  const OnBookAppointment = async (values) => {
     const slotTimestamp = Timestamp.fromDate(values.slot.toDate());
-
-    console.log("doctor mail",doctormail);
-
-    const dataToStore = {
+    let status = 'Not Completed'
+     const dataToStore = {
       Name: values.name,
       Email: values.email,
       Contact: values.contactnumber,
       Age: values.age,
       Gender: values.gender,
       slot: slotTimestamp,
+      Assigned_to:doctormail,
+      caseStatus:status,
     };
 
     try {
       const collectionRef = collection(firestore, 'CasesDB');
       await addDoc(collectionRef, dataToStore);
 
-      const bookresponse = await axios.post("http://localhost:3001/send-email-doctor",{
+      const bookresponse = await axios.post("http://localhost:3001/send-email-newcase-doctor",{
         to:doctormail,
         subject:`Hi Dr.${doctorname} You Have A New Case`,
         text:`Patient Name:${values.name} \nPatient Email:${values.email}\nPatient Contact Number:${values.contactnumber}\nPatient Gender:${values.gender}\nTime Slot:${values.slot}`
@@ -59,8 +58,8 @@ const Booking = () => {
     }
   };
 
-  const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
+  const OnBookAppointmentFailed = (errorInfo) => {
+    console.error('Failed:', errorInfo);
   };
 
   const onChange = (date, dateString) => {
@@ -102,8 +101,8 @@ const Booking = () => {
           <Form
                 name="basic"
                 initialValues={{ remember: true }}
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
+                onFinish={OnBookAppointment}
+                onFinishFailed={OnBookAppointmentFailed}
                 autoComplete="off"
                 form={form}
             >
