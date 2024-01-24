@@ -17,12 +17,12 @@ const Dashboard = () => {
   return (
     <div style={{ width: '100%', height: '100vh', display: 'flex', backgroundColor: 'white', backgroundImage: `url(${loginImage})`, backgroundSize: 'cover', backgroundPosition: 'center', alignItems: 'center', justifyContent: 'center' }}>
       <div className='divContainer' style={{ display: 'flex', width: '60%', height: '56%', borderRadius: '20px', background: 'rgba(255, 255, 255, 0.12)' }}>
-        <div style={{ paddingLeft: '8%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ paddingLeft: '8%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
           <div>
-            <Title level={2} style={{ textAlign: 'center' }}>
+            <Title level={2}>
               VOICE PATHOLOGY DETECTION
               <br />
-              <Text style={{ display: 'block', textAlign: 'center' }}>Test your pathology</Text>
+              <Text>Test your pathology</Text>
             </Title>
           </div>
         </div>
