@@ -20,7 +20,7 @@ const DoctorLogin = () => {
   const authenticate = useAuth();
 
   const handleLogin = async () => {
-    const collectionRef = collection(firestore, 'DoctorDB');
+    const collectionRef = collection(firestore, 'DoctorsDB');
     try {
       const querySnapshot = await getDocs(
         query(collectionRef, where('Email', '==', email), where('Password', '==', password))

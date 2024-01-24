@@ -16,7 +16,7 @@ const DoctorDetails = () => {
         
         const fetchDoctors = async () => {
             try {
-                const collectionRef = collection(firestore, 'DoctorDB');
+                const collectionRef = collection(firestore, 'DoctorsDB');
                 const querySnapshot = await getDocs(collectionRef);
                 const updatedDoctorDetails = querySnapshot.docs.map((doc) => doc.data());
 
