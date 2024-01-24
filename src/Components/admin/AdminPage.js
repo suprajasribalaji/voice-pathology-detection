@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, addDoc, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, deleteDoc, doc, query, where } from 'firebase/firestore';
 import { Button, Form, Input, message, Modal, Space, Table, Popconfirm, Card,Select} from 'antd';
 import { Option } from 'antd/es/mentions';
 import { useNavigate } from 'react-router-dom';
@@ -20,8 +20,8 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
         form
           .validateFields()
           .then((values) => {
-            form.resetFields();
             onCreate(values);
+            form.resetFields();
           })
           .catch((info) => {
             console.log('Validate Failed:', info);
@@ -72,9 +72,13 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
               required: true,
               message: 'Please input contact number!',
             },
+            {
+              pattern: /^[0-9]{10}$/,
+              message: 'Please enter a valid 10-digit phone number!',
+            },
           ]}
         >
-          <Input type="telephone"/>
+          <Input />
         </Form.Item>
 
         <Form.Item
@@ -145,7 +149,11 @@ const AdminPage = () => {
 
   const handleCreatenewDoctor = async (values) => {
     try {
-      const collectionRef = collection(firestore, 'DoctorDB');
+      const collectionRef = collection(firestore, 'DoctorsDB');
+      const validate_email= await getDocs(query(collectionRef, where('Email', '==', values.Email)));
+      const validate_phone= await getDocs(query(collectionRef, where('contactNumber', '==', values.contactNumber)));
+      if(validate_email.docs.length===0 && validate_phone.docs.length===0)
+      {
       await addDoc(collectionRef, values);
       const querySnapshot = await getDocs(collectionRef);
       const updatedDoctorDetails = querySnapshot.docs.map((doc) => doc.data());
@@ -159,11 +167,13 @@ const AdminPage = () => {
       if (newaccount_mail.status === 200) {
         message.success('Doctor added successfully!');
       }
-      else {
-        console.error("Errorrrrrrr")
-      }
+    }
+    else
+    {
+      message.error("Mail ID  or Phone Number Already Exists. Try With other")
+    }
+
     } catch (error) {
-      console.error('Error adding doctor:', error);
       message.error('Failed to add doctor. Please try again.');
     }
   };
@@ -171,12 +181,11 @@ const AdminPage = () => {
 
   const handleDelete = async (record) => {
     try {
-      const collectionRef = collection(firestore, 'DoctorDB');
+      const collectionRef = collection(firestore, 'DoctorsDB');
       await deleteDoc(doc(collectionRef, record.id));
       message.success('Doctor deleted successfully!');
-      fetchData('DoctorDB');
+      fetchData('DoctorsDB');
     } catch (error) {
-      console.error('Error deleting doctor:', error);
       message.error('Failed to delete doctor. Please try again.');
     }
   };
@@ -201,12 +210,12 @@ const AdminPage = () => {
   const fetchData = async (collectionName) => {
     try {
       const collectionRef = collection(firestore, collectionName);
-      const querySnapshot = await getDocs(collectionRef);
-      const data = querySnapshot.docs.map((doc) => ({
+      const validate_cred = await getDocs(collectionRef);
+      const data = validate_cred.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      if (collectionName === 'DoctorDB') {
+      if (collectionName === 'DoctorsDB') {
         setDoctorDetails(data);
       } else if (collectionName === 'CasesDB') {
         setCasesDetails(data);
@@ -217,7 +226,7 @@ const AdminPage = () => {
   };
 
   useEffect(() => {
-    fetchData('DoctorDB');
+    fetchData('DoctorsDB');
   }, [isListDoctors]);
 
   useEffect(() => {

@@ -31,8 +31,7 @@ const CollectionCreateForm = ({ open, Adduser, onCancel }) => {
         form
           .validateFields()
           .then((values) => {
-          form.resetFields();
-          console.log(values);
+           form.resetFields();
           Adduser(values);
           })
           .catch((info) => {
@@ -153,7 +152,6 @@ const CollectionCreateForm = ({ open, Adduser, onCancel }) => {
 
 const UserLogin = () => {
   const navigate = useNavigate();
-  const {userLogin} = useAuth()
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState(''); 
   const [password, setPassword] = useState('');
@@ -162,29 +160,29 @@ const UserLogin = () => {
   
   const Adduser = async (values) => {
     const { username, confirm, phone, gender, email } = values;
-    if (values) {
-      try {
-        const collectionRef = collection(firestore, 'PatientsDB'); 
-        const res = await addDoc(collectionRef, {
+  
+    try {
+      const collectionRef = collection(firestore, 'PatientsDB');
+      const valiate_email = await getDocs(query(collectionRef, where('Email', '==', email)));
+      const validate_phone = await getDocs(query(collectionRef,where('Phone_number','==',phone)))
+      if (valiate_email.docs.length === 0 && validate_phone.docs.length===0) {
+        await addDoc(collectionRef, {
           Email: email,
           Gender: gender,
           Username: username,
           Phone_number: phone,
           Password: confirm
         });
-        console.log('User added successfully!', res);
-      } catch (error) {
-        console.error('Error adding user: ', error);
+        message.success('Account created successfully! Please login to continue');
+        setOpen(false);
+      } else {
+        message.error("Email Id or Phone Number Already Exists. Please Try With Any Other Mail ID");
       }
-  
-      message.success('Account created successfully! Please login to continue');
-      setOpen(false);
-    } else {
-      message.error('Account creation failed! Please try again with filling all the fields correctly');
+    } catch (error) {
+      console.error('Error adding user: ', error);
     }
   };
-  
-
+   
   const onFinish = (values) => {
     console.log('Received values of form: ', values);
   };
@@ -202,14 +200,9 @@ const UserLogin = () => {
       if (!querySnapshot.empty) {
         const user = querySnapshot.docs[0].data();
         const { Username } = user;
-        console.log(Username)
         authenticate.userLogin(Username);
         message.success('User logged in successfully');
-  
-        
         navigate('/usertest');
-  
-        console.log('User logged in successfully');
       } else {
         message.error('Invalid email or password');
         console.log('Invalid email or password');
@@ -218,7 +211,6 @@ const UserLogin = () => {
       console.error('Error logging in:', error.message);
     }
   };
-  
   
 
   return (
