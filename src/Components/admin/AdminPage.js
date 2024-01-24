@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, addDoc, getDocs, deleteDoc, doc } from 'firebase/firestore';
-import { Button, Form, Input, message, Modal, Space, Table, Popconfirm, Card } from 'antd';
+import { Button, Form, Input, message, Modal, Space, Table, Popconfirm, Card,Select} from 'antd';
+import { Option } from 'antd/es/mentions';
 import { useNavigate } from 'react-router-dom';
 import { firestore } from '../../firebase-config';
 import axios from 'axios'
@@ -140,6 +141,7 @@ const AdminPage = () => {
   const [isListCases, setListCases] = useState(false);
   const [doctorDetails, setDoctorDetails] = useState([]);
   const [casesDetails, setCasesDetails] = useState([]);
+  const [filteredCases, setFilteredCases] = useState([]);
 
   const handleCreatenewDoctor = async (values) => {
     try {
@@ -179,6 +181,22 @@ const AdminPage = () => {
     }
   };
 
+
+  const handleFilterChange = (value) => {
+    if (value === 'All') {
+      setFilteredCases(casesDetails);
+    } else {
+      if(value==='Not Completed')
+      {
+      const filtered = casesDetails.filter((caseItem) => caseItem.caseStatus === value);
+      setFilteredCases(filtered);
+      }
+      else {
+        const filtered = casesDetails.filter((caseItem) => caseItem.caseStatus !=='Not Completed');
+        setFilteredCases(filtered);
+      }
+    }
+  };
 
   const fetchData = async (collectionName) => {
     try {
@@ -305,7 +323,7 @@ const AdminPage = () => {
       dataIndex: 'caseStatus',
       key: 'caseStatus',
       render: (text, record) => (
-        <span style={{ color: record.caseStatus === 'Not Completed' ? 'red' : 'green' }}>
+        <span style={{ color: record.caseStatus === 'Not Completed' ? 'red' : 'green  ' }}>
           {text}
         </span>
       ),
@@ -320,6 +338,7 @@ const AdminPage = () => {
   const listCases = () => {
     setListCases(true);
     setListDoctors(false);
+    setFilteredCases([]);
     fetchData('CasesDB');
   };
 
@@ -348,12 +367,22 @@ const AdminPage = () => {
           <Table columns={columns} dataSource={doctorDetails} />
         </Card>
       )}
-      {isListCases && (
-        <Card title="Cases Details" style={{ marginTop: '2%' }}>
-          <Table columns={casesColumns} dataSource={casesDetails} />
+     {isListCases && (
+        <Card title="Patient's Case Details" style={{ marginTop: '2%' }}>
+          <Space>
+            <span>Filter by Case Status:</span>
+            <Select defaultValue="All" style={{ width: 120 }} onChange={handleFilterChange}>
+              <Option value="All">All</Option>
+              <Option value="Completed">Completed</Option>
+              <Option value="Not Completed">Not Completed</Option>
+            </Select>
+          </Space>
+          <Table
+            columns={casesColumns}
+            dataSource={filteredCases.length > 0 ? filteredCases : casesDetails}
+          />
         </Card>
       )}
-
       <CollectionCreateForm
         open={open}
         onCreate={handleCreatenewDoctor}

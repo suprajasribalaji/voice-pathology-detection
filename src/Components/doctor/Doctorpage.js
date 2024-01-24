@@ -241,7 +241,8 @@ const DoctorPage = () => {
             }
             message.success("Case Completed Successfully")
             const caseRef = doc(firestore, 'CasesDB', values.Study_ID);
-            await updateDoc(caseRef, { caseStatus: `Completed By DR.${doctorname}`});
+            const date = new Date();
+            await updateDoc(caseRef, { caseStatus: `Completed By DR.${doctorname} on ${date}`});
             setOpen(false);
         } catch (error) {
             console.error('Error sending email and SMS:', error);
@@ -349,11 +350,11 @@ const DoctorPage = () => {
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h2>Welcome {doctorname}!</h2>
-                <h2>Assigned Cases</h2>
+                <h2>Your Appointments</h2>
                 <Button type="primary" onClick={handleLogout}>Logout</Button>
             </div>
             <div>
-                <h3>Cases details</h3>
+                <h3>Patient's Case Details</h3>
                 <Table columns={casesColumns} dataSource={casesDetails} />
             </div>
 
