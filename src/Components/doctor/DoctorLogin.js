@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { firestore } from '../../firebase-config';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { Button, Form, Input, message } from 'antd';
@@ -38,68 +39,56 @@ const DoctorLogin = () => {
       }
     } catch (error) {
       console.error('Error logging in:', error.message);
-    }
-
-    
+    }    
   };
 
   return (
     <div>
-      <Form
-        name="basic"
-        labelCol={{
-          span: 8,
-        }}
-        wrapperCol={{
-          span: 16,
-        }}
-        style={{
-          maxWidth: 600,
-        }}
+       <Form
+        name="normal_login"
+        className="login-form"
         initialValues={{
           remember: true,
         }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
-        autoComplete="off"
       >
         <Form.Item
-          label="Doctor Mail"
-          name="doctorId"
+          name="email"
           rules={[
             {
               required: true,
-              message: 'Please input your Mail Id!',
+              message: 'Please input your Email!',
             },
           ]}
-          onChange={(e) => setEmail(e.target.value)}
         >
-          <Input />
+          <Input prefix={<UserOutlined />} placeholder="Enter Doctor's Mail Id"
+           onChange={(e) => setEmail(e.target.value)} />
         </Form.Item>
-
+        
         <Form.Item
-          label="Password"
           name="password"
           rules={[
             {
               required: true,
-              message: 'Please input your password!',
+              message: 'Please input your Password!',
             },
           ]}
-          onChange={(e) => setPassword(e.target.value)}
         >
-          <Input.Password />
+          <Input
+            prefix={<LockOutlined />}
+            type="password"
+            placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </Form.Item>
 
-        <Form.Item
-          wrapperCol={{
-            offset: 8,
-            span: 16,
-          }}
-        >
-          <Button type="primary" onClick={handleLogin}>
-            Login
-          </Button>
+        <Form.Item>
+          <Button type="primary" onClick={handleLogin}>Log in</Button>
+        </Form.Item>
+
+        <Form.Item>
+          Don't have an account? Contact Admin!!!
         </Form.Item>
       </Form>
     </div>
