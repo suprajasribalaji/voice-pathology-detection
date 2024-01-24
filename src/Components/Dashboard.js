@@ -12,7 +12,7 @@ const Dashboard = () => {
 
   return (
     <div style={{ width: '100%', height: '100vh', display: 'flex', backgroundColor: 'white', backgroundImage: `url(${loginImage})`, backgroundSize: 'cover', backgroundPosition: 'center', alignItems: 'center', justifyContent: 'center', }}>
-      <div className='divContainer' style={{ display: 'flex', width: '60%', height: '56%', borderRadius: '20px', background: 'rgba(255, 255, 255, 0.8)' }}>
+      <div className='divContainer' style={{ display: 'flex', width: '60%', height: '56%', borderRadius: '20px', background: 'rgba(135,206,250, 0.3)' }}>
         <div style={{ paddingLeft: '8%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
           <div>
             <Title level={2}>
