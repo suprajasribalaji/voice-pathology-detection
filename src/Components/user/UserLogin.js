@@ -259,7 +259,13 @@ const UserLogin = () => {
 
         <Form.Item>
           Don't have an account?
-          <Button type="link" onClick={() => { setOpen(true) }}>Register Now!</Button>
+              <Button
+                type="link"
+                style={{ fontWeight: 'bold', color: 'white' }}
+                onClick={() => setOpen(true)}
+              >
+                Register Now!
+              </Button>
           <CollectionCreateForm
             open={open}
             Adduser={Adduser}

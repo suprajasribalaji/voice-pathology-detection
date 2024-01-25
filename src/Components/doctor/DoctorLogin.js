@@ -30,8 +30,8 @@ const DoctorLogin = () => {
       if (!querySnapshot.empty) {
         message.success('Doctor logged in successfully');
         const doctor = querySnapshot.docs[0].data();
-        const {name,Email} = doctor;
-        authenticate.doctorLogin(name,Email);
+        const { name, Email } = doctor;
+        authenticate.doctorLogin(name, Email);
         navigate('/doctor');
       } else {
         message.error('Invalid email or password');
@@ -39,12 +39,12 @@ const DoctorLogin = () => {
       }
     } catch (error) {
       console.error('Error logging in:', error.message);
-    }    
+    }
   };
 
   return (
     <div>
-       <Form
+      <Form
         name="normal_login"
         className="login-form"
         initialValues={{
@@ -62,10 +62,9 @@ const DoctorLogin = () => {
             },
           ]}
         >
-          <Input prefix={<UserOutlined />} placeholder="Enter Doctor's Mail Id"
-           onChange={(e) => setEmail(e.target.value)} />
+          <Input prefix={<UserOutlined />} placeholder="Enter Doctor's Mail Id" onChange={(e) => setEmail(e.target.value)} />
         </Form.Item>
-        
+
         <Form.Item
           name="password"
           rules={[
@@ -84,12 +83,18 @@ const DoctorLogin = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" onClick={handleLogin}>Log in</Button>
+          <Button type="primary" onClick={handleLogin}>
+            Log in
+          </Button>
         </Form.Item>
 
-        <Form.Item>
-          Don't have an account? Contact Admin!!!
-        </Form.Item>
+        <Form.Item style={{ textAlign: 'right' }}>
+  <span>Don't have an account?</span>
+  <Form.Item type="link" style={{ fontWeight: 'bold', color: 'white' }}>
+    Contact Admin!
+  </Form.Item>
+</Form.Item>
+
       </Form>
     </div>
   );

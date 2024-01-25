@@ -85,6 +85,9 @@ const AdminLogin = () => {
         <Form.Item>
           <Button type="primary" onClick={handleLogin}>Log in</Button>
         </Form.Item>
+        <Form.Item style={{color:'black'}}>
+         Login to Access the Admin Portal
+        </Form.Item>
       </Form>
     </div>
   );
