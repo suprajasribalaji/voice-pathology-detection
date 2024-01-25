@@ -53,11 +53,11 @@ const Dashboard = () => {
               ADMIN
             </Button>
           </Space>
-          <div style={{ borderRadius: '20px', height: '80%', width: '120%', paddingTop: '2%', paddingLeft: '3%', marginTop: '4%', background: 'rgba(255, 255, 255,0.10)', fontWeight: 'bold'}}>
-            <div style={{ marginTop: '4%', marginLeft: '18%' }}>
+          <div style={{ borderRadius: '20px', height: '80%', width: '120%', paddingTop: '2%', marginTop: '4%', background: 'rgba(255, 255, 255,0.10)', fontWeight: 'bold'}}>
+            <div style={{ marginTop: '4%', marginLeft: '15%' }}>
               <Text style={{ fontSize: '18px' }}>Welcome {currentAccess}!!</Text>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', alignItems: 'center', paddingTop: '4%', marginTop: '2%' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingTop: '4%', marginTop: '2%', marginLeft: '15%'}}>
               {currentAccess === 'Admin' ? <AdminLogin /> : currentAccess === 'Doctor' ? <DoctorLogin /> : <UserLogin />}
             </div>
           </div>
