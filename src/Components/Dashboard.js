@@ -53,7 +53,7 @@ const Dashboard = () => {
               ADMIN
             </Button>
           </Space>
-          <div style={{ borderRadius: '20px', height: '80%', width: '120%', paddingTop: '2%', paddingLeft: '3%', marginTop: '4%', background: 'rgb(230,230,250,0.3)', fontWeight: 'bolder', }}>
+          <div style={{ borderRadius: '20px', height: '80%', width: '120%', paddingTop: '2%', paddingLeft: '3%', marginTop: '4%', background: 'rgba(255, 255, 255, 0.7)', fontWeight: 'bold'}}>
             <div style={{ marginTop: '4%', marginLeft: '18%' }}>
               <Text style={{ fontSize: '18px' }}>Welcome {currentAccess}!!</Text>
             </div>
