@@ -16,7 +16,7 @@ const Dashboard = () => {
 
   return (
     <div style={{ width: '100%', height: '100vh', display: 'flex', backgroundColor: 'white', backgroundImage: `url(${loginImage})`, backgroundSize: 'cover', backgroundPosition: 'center', alignItems: 'center', justifyContent: 'center' }}>
-      <div className='divContainer' style={{ display: 'flex', width: '60%', height: '56%', borderRadius: '20px', background: 'rgba(255, 255, 255, 0.12)' }}>
+      <div className='divContainer' style={{ display: 'flex', width: '60%', height: '56%', borderRadius: '20px', background: 'rgba(255, 255, 255, 0.10)' }}>
         <div style={{ paddingLeft: '8%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
           <div>
             <Title level={2}>
@@ -26,8 +26,8 @@ const Dashboard = () => {
             </Title>
           </div>
         </div>
-        <div style={{ flex: 1, paddingTop: '3%', marginRight: '12%' }}>
-          <Space>
+        <div style={{ flex: 1, paddingTop: '3%', marginRight: '14%' }}>
+          <Space style={{flex:1,marginLeft:'25%'}}>
             <Button
               type='link'
               style={{ color: 'black', fontSize: '16px', border: 'none', borderBottom: currentAccess === 'User' ? '2px solid #1890ff' : 'none' }}
@@ -53,7 +53,7 @@ const Dashboard = () => {
               ADMIN
             </Button>
           </Space>
-          <div style={{ borderRadius: '20px', height: '80%', width: '120%', paddingTop: '2%', paddingLeft: '3%', marginTop: '4%', background: 'rgba(255, 255, 255, 0.7)', fontWeight: 'bold'}}>
+          <div style={{ borderRadius: '20px', height: '80%', width: '120%', paddingTop: '2%', paddingLeft: '3%', marginTop: '4%', background: 'rgba(255, 255, 255,0.10)', fontWeight: 'bold'}}>
             <div style={{ marginTop: '4%', marginLeft: '18%' }}>
               <Text style={{ fontSize: '18px' }}>Welcome {currentAccess}!!</Text>
             </div>
