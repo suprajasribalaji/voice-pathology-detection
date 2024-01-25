@@ -57,7 +57,7 @@ const Dashboard = () => {
             <div style={{ marginTop: '4%', marginLeft: '15%' }}>
               <Text style={{ fontSize: '18px' }}>Welcome {currentAccess}!!</Text>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingTop: '4%', marginTop: '2%', marginLeft: '15%'}}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingTop: '4%', marginTop: '2%', marginLeft: '15%',paddingLeft:'45px'}}>
               {currentAccess === 'Admin' ? <AdminLogin /> : currentAccess === 'Doctor' ? <DoctorLogin /> : <UserLogin />}
             </div>
           </div>

@@ -85,8 +85,8 @@ const AdminLogin = () => {
         <Form.Item>
           <Button type="primary" onClick={handleLogin}>Log in</Button>
         </Form.Item>
-        <Form.Item style={{color:'black'}}>
-         Login to Access the Admin Portal
+        <Form.Item style={{ textAlign: 'right' }}>
+          <span>Let's conquer the day with    <span style={{color: 'white'}}>  Productivity!</span></span>
         </Form.Item>
       </Form>
     </div>

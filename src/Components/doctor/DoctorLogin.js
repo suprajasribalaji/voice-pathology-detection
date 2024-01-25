@@ -89,7 +89,7 @@ const DoctorLogin = () => {
         </Form.Item>
 
         <Form.Item style={{ textAlign: 'right' }}>
-          <span>Don't have an account?   <span style={{color: 'white'}}>Contact Admin!</span></span>
+          <span>Don't have an account?   <span style={{color: 'white'}}>  Contact Admin!</span></span>
         </Form.Item>
 
       </Form>
