@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { ReactMic } from "react-mic";
 import { Typography, Row, Col, Button, Space, Upload, message } from "antd";
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, LogoutOutlined } from '@ant-design/icons';
+import { AiFillAudio, AiFillExperiment  } from "react-icons/ai";
 import { app } from '../../firebase-config';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Authentication";
-
+import test from "../../images/TestPage.jpg";
+import { FaUserDoctor } from "react-icons/fa6"
 
 const { Title, Text } = Typography;
 
@@ -18,15 +20,12 @@ const UserTest = () => {
   const storageRef = ref(storage, 'VoicesDB');
 
   const nav = useNavigate();
+
   const [isRecording, setIsRecording] = useState(false);
   const [recordedAudioURL, setRecordedAudioURL] = useState(null);
 
-  const startRecording = () => {
-    setIsRecording(true);
-  };
-
-  const stopRecording = () => {
-    setIsRecording(false);
+  const toggleRecording = () => {
+    setIsRecording(prevRecordingState => !prevRecordingState);
   };
 
   const onData = (recordedData) => {
@@ -85,65 +84,68 @@ const UserTest = () => {
   };
 
   return (
-    <div style={{ background: 'rgba(255, 255, 255, 0.9)', minHeight: '100vh', display: 'flex', flexDirection: 'column',alignItems:'center' }}>
-      <div style={{ marginTop: '1%', alignSelf: 'flex-end', marginRight: '5%' }}>
-        <Space>
-          <Text type="primary">Welcome {username}</Text>
-          <Button type="primary" onClick={handleLogout}>Logout</Button>
-        </Space>
+    <div style={{ background: 'rgba(255, 255, 255, 0.9)' }}>
+      <div style={{ marginLeft: '2%', display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{marginBottom: '1%'}}>
+          <div>
+            <Title level={4}>
+              VOICE PATHOLOGY DETECTION
+              <br />
+              <Text>Test your pathology</Text>
+            </Title>
+          </div>
+        </div>
+        <div style={{marginTop: '3%', paddingRight: '2%'}}>
+          <Space>
+            <Text style={{fontSize: '16px'}}>Welcome {username}</Text>
+            <Button onClick={handlePageSwitch} style={{ marginLeft: '5%' }}>
+              <FaUserDoctor />
+            </Button>
+            <Button icon={<LogoutOutlined />} onClick={handleLogout} style={{marginLeft: '10%'}}></Button>
+          </Space>
+        </div>
       </div>
 
-      <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div style={{ width: '60%', textAlign: 'center', padding: '5%' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{ width: '100%', height: '65vh',padding: '5%', backgroundImage: `url(${test})`,  backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
           <Row>
             <Col span={24}>
-              <div>
-                <Title level={2}>
-                  VOICE PATHOLOGY DETECTION
-                  <br />
-                  Test your pathology
-                </Title>
-              </div>
-
               <div>
                 <Text>Please record your voice here</Text>
               </div>
 
-              <div style={{ marginTop: '4%' }}>
+              <div >
                 <Space>
-                  <Upload customRequest={customRequest} onChange={onFileChange}>
-                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                  </Upload>
+                  <ReactMic
+                    record={isRecording}
+                    onStop={onStop}
+                    onData={onData}
+                    mimeType="audio/wav"
+                    echoCancellation={true}
+                  />
+                  <Button type="primary" onClick={toggleRecording} style={{borderRadius: '20px'}}>
+                    <AiFillAudio/>
+                  </Button>
                 </Space>
               </div>
 
-              <div style={{ marginTop: '2%' }}>
-                <Button type="primary" onClick={startRecording} disabled={isRecording}>Start</Button>
-                <ReactMic
-                  record={isRecording}
-                  onStop={onStop}
-                  onData={onData}
-                />
-                <Button onClick={stopRecording} disabled={!isRecording}>Stop</Button>
-              </div>
-
-              <div style={{ marginTop: '2%' }}>
-                {recordedAudioURL && (
-                  <audio controls>
-                    <source src={recordedAudioURL} type="audio/wav" />
-                    Your browser does not support the audio element.
-                  </audio>
-                )}
-              </div>
-
-              <div style={{ marginTop: '4%' }}>
-                <Button type="primary" onClick={handlePageSwitch}>Go to Consultation page</Button>
-              </div>
-
-              <div style={{ marginTop: '4%' }}>
-                <Button type="primary" onClick={handleTestButtonClick}>
-                  Test
-                </Button>
+              <div>
+                <Space>
+                  <div style={{ marginTop: '2%' }}>
+                    {recordedAudioURL && (
+                      <audio controls>
+                        <source src={recordedAudioURL} type="audio/wav" />
+                        Your browser does not support the audio element.
+                      </audio>
+                    )}
+                  </div>
+                  <Upload customRequest={customRequest} onChange={onFileChange}>
+                    <Button icon={<UploadOutlined />}></Button>
+                  </Upload>
+                  <Button onClick={handleTestButtonClick}>
+                    <AiFillExperiment/>
+                  </Button>
+                </Space>
               </div>
             </Col>
           </Row>

@@ -3,7 +3,7 @@ import { Button, Space, Typography } from 'antd';
 import AdminLogin from './admin/AdminLogin';
 import UserLogin from './user/UserLogin';
 import DoctorLogin from './doctor/DoctorLogin';
-import loginImage from '../images/login2.jpg';
+import loginImage from '../images/LoginPage.jpg';
 
 const { Title, Text } = Typography;
 

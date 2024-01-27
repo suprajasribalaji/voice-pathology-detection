@@ -16,7 +16,7 @@ const genderOptions = [
 
 const Booking = () => {
   const authenticate = useAuth();
-  const username = authenticate.user;
+  const user = authenticate.user.userName;
   const doctormail = authenticate.current_doctor.email;
   const doctorname = authenticate.current_doctor.name;
   const [form] = Form.useForm();
@@ -84,7 +84,7 @@ const Booking = () => {
         </div>
         <div style={{marginTop: '2%', paddingRight: '2%'}}>
           <Space>
-            <Text type="primary" >Welcome {username}</Text>
+            <Text type="primary" >Welcome {user}</Text>
             <Button type="primary" onClick={handleLogout} style={{marginLeft: '10%'}}>
               Logout
             </Button>
