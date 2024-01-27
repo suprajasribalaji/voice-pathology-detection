@@ -176,7 +176,14 @@ const UserLogin = () => {
         message.success('Account created successfully! Please login to continue');
         setOpen(false);
       } else {
-        message.error("Email Id or Phone Number Already Exists. Please Try With Any Other Mail ID");
+       if(validate_phone.docs.length>0)
+       {
+        message.error(" Phone Number Already Exists. Please Try With Any Other Mail ID");
+       }
+       else
+       {
+        message.error("Email Id Already Exists. Please Try With Any Other Mail ID");
+       }
       }
     } catch (error) {
       console.error('Error adding user: ', error);
@@ -199,8 +206,8 @@ const UserLogin = () => {
   
       if (!querySnapshot.empty) {
         const user = querySnapshot.docs[0].data();
-        const { Username } = user;
-        authenticate.userLogin(Username);
+        const { Username,Email } = user;
+        authenticate.userLogin(Username,Email);
         message.success('User logged in successfully');
         navigate('/usertest');
       } else {

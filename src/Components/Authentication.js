@@ -8,8 +8,8 @@ export const AuthProvider = ({ children }) => {
   const [doctor, setDoctor] = useState(null);
   const [current_doctor, setCurrent_doctor] = useState(null);
 
-  const userLogin = (userData) => {
-    setUser(userData);
+  const userLogin = (userName,userEmail) => {
+    setUser({ userName,userEmail });
   };
 
   const adminLogin = (adminData) => {

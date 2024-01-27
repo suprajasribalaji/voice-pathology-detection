@@ -13,7 +13,7 @@ const { Title, Text } = Typography;
 
 const UserTest = () => {
   const authenticate = useAuth();
-  const username = authenticate.user;
+  const username = authenticate.user.userName;
   const storage = getStorage(app);
   const storageRef = ref(storage, 'VoicesDB');
 

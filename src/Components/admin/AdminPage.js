@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { collection, addDoc, getDocs, deleteDoc, doc, query, where } from 'firebase/firestore';
-import { Button, Form, Input, message, Modal, Space, Table, Popconfirm, Card,Select} from 'antd';
+import { Button, Form, Input, message, Modal, Space, Table, Popconfirm, Card, Select } from 'antd';
 import { Option } from 'antd/es/mentions';
 import { useNavigate } from 'react-router-dom';
 import { firestore } from '../../firebase-config';
@@ -146,32 +146,31 @@ const AdminPage = () => {
   const [doctorDetails, setDoctorDetails] = useState([]);
   const [casesDetails, setCasesDetails] = useState([]);
   const [filteredCases, setFilteredCases] = useState([]);
+  const [isListMedicines, setListMedicines] = useState(false);
 
   const handleCreatenewDoctor = async (values) => {
     try {
       const collectionRef = collection(firestore, 'DoctorsDB');
-      const validate_email= await getDocs(query(collectionRef, where('Email', '==', values.Email)));
-      const validate_phone= await getDocs(query(collectionRef, where('contactNumber', '==', values.contactNumber)));
-      if(validate_email.docs.length===0 && validate_phone.docs.length===0)
-      {
-      await addDoc(collectionRef, values);
-      const querySnapshot = await getDocs(collectionRef);
-      const updatedDoctorDetails = querySnapshot.docs.map((doc) => doc.data());
-      setDoctorDetails(updatedDoctorDetails);
-      const newaccount_mail = await axios.post("http://localhost:3001/send-mail-newaccount-doctor", {
-        to: values.Email,
-        subject: `Welcome Dr.${values.name} Your New Account Has Been Created..!!`,
-        text: `Note Please Keep your ACCESS CREDIENTIALS in Secure Manner \n Gmail:${values.Email}\n Password:${values.Password}`,
-      })
-      setOpen(false);
-      if (newaccount_mail.status === 200) {
-        message.success('Doctor added successfully!');
+      const validate_email = await getDocs(query(collectionRef, where('Email', '==', values.Email)));
+      const validate_phone = await getDocs(query(collectionRef, where('contactNumber', '==', values.contactNumber)));
+      if (validate_email.docs.length === 0 && validate_phone.docs.length === 0) {
+        await addDoc(collectionRef, values);
+        const querySnapshot = await getDocs(collectionRef);
+        const updatedDoctorDetails = querySnapshot.docs.map((doc) => doc.data());
+        setDoctorDetails(updatedDoctorDetails);
+        const newaccount_mail = await axios.post("http://localhost:3001/send-mail-newaccount-doctor", {
+          to: values.Email,
+          subject: `Welcome Dr.${values.name} Your New Account Has Been Created..!!`,
+          text: `Note Please Keep your ACCESS CREDIENTIALS in Secure Manner \n Gmail:${values.Email}\n Password:${values.Password}`,
+        })
+        setOpen(false);
+        if (newaccount_mail.status === 200) {
+          message.success('Doctor added successfully!');
+        }
       }
-    }
-    else
-    {
-      message.error("Mail ID  or Phone Number Already Exists. Try With other")
-    }
+      else {
+        message.error("Mail ID  or Phone Number Already Exists. Try With other")
+      }
 
     } catch (error) {
       message.error('Failed to add doctor. Please try again.');
@@ -195,13 +194,12 @@ const AdminPage = () => {
     if (value === 'All') {
       setFilteredCases(casesDetails);
     } else {
-      if(value==='Not Completed')
-      {
-      const filtered = casesDetails.filter((caseItem) => caseItem.caseStatus === value);
-      setFilteredCases(filtered);
+      if (value === 'Not Completed') {
+        const filtered = casesDetails.filter((caseItem) => caseItem.caseStatus === value);
+        setFilteredCases(filtered);
       }
       else {
-        const filtered = casesDetails.filter((caseItem) => caseItem.caseStatus !=='Not Completed');
+        const filtered = casesDetails.filter((caseItem) => caseItem.caseStatus !== 'Not Completed');
         setFilteredCases(filtered);
       }
     }
@@ -220,6 +218,9 @@ const AdminPage = () => {
       } else if (collectionName === 'CasesDB') {
         setCasesDetails(data);
       }
+      else if (collectionName === 'MedicinesDB') {
+        setListMedicines(data);
+      }
     } catch (error) {
       console.error(`Error fetching ${collectionName} data:`, error);
     }
@@ -232,6 +233,11 @@ const AdminPage = () => {
   useEffect(() => {
     fetchData('CasesDB');
   }, [isListCases]);
+
+  useEffect(() => {
+    fetchData('MedicinesDB');
+}, [isListMedicines])
+
 
   const columns = [
     {
@@ -339,6 +345,15 @@ const AdminPage = () => {
     },
   ];
 
+
+  const medicine_columns = [
+    {
+      title: 'Medicine Name',
+      dataIndex: 'MedicineName',
+      key: 'MedicineName'
+    }
+  ];
+
   const listDoctors = () => {
     setListDoctors(true);
     setListCases(false);
@@ -355,6 +370,13 @@ const AdminPage = () => {
     navigate('/');
   };
 
+  const listMedicines = () => {
+    setListMedicines(true);
+    setListDoctors(false);
+    setListCases(false);  
+    fetchData('MedicinesDB')
+  }
+
   return (
     <div style={{ margin: '2%' }}>
       <Card title="Admin Page" extra={<Button onClick={handleLogout}>Logout</Button>}>
@@ -368,6 +390,9 @@ const AdminPage = () => {
           <Button type="primary" onClick={listCases}>
             List Cases
           </Button>
+          <Button type="primary" onClick={listMedicines}>
+            List Medicines
+          </Button>
         </Space>
       </Card>
 
@@ -376,7 +401,7 @@ const AdminPage = () => {
           <Table columns={columns} dataSource={doctorDetails} />
         </Card>
       )}
-     {isListCases && (
+      {isListCases && (
         <Card title="Patient's Case Details" style={{ marginTop: '2%' }}>
           <Space>
             <span>Filter by Case Status:</span>
@@ -392,6 +417,13 @@ const AdminPage = () => {
           />
         </Card>
       )}
+
+      {isListMedicines && (
+        <Card title="Medicine's Details" style={{ marginTop: '2%' }}>
+          <Table columns={medicine_columns} dataSource={isListMedicines} />
+        </Card>
+      )}
+
       <CollectionCreateForm
         open={open}
         onCreate={handleCreatenewDoctor}

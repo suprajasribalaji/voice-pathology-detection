@@ -21,8 +21,8 @@ const sideMenuItems = [
 
 const UserPage = () => {
   const authenticate = useAuth();
-  const username = authenticate.user;
-
+  const username = authenticate.user.userName;
+  // const useremail = authenticate.user.userEmail
   const navigate = useNavigate();
 
   const [selectedMenuItem, setSelectedMenuItem] = useState('1');
