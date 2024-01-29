@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ReactMic } from "react-mic";
 import { Typography, Row, Col, Button, Space, Upload, message } from "antd";
 import { UploadOutlined, LogoutOutlined } from '@ant-design/icons';
-import { AiFillAudio, AiFillExperiment  } from "react-icons/ai";
+import { AiFillAudio, AiFillExperiment } from "react-icons/ai";
 import { app } from '../../firebase-config';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -86,7 +86,7 @@ const UserTest = () => {
   return (
     <div style={{ background: 'rgba(255, 255, 255, 0.9)' }}>
       <div style={{ marginLeft: '2%', display: 'flex', justifyContent: 'space-between' }}>
-        <div style={{marginBottom: '1%'}}>
+        <div style={{ marginBottom: '1%' }}>
           <div>
             <Title level={4}>
               VOICE PATHOLOGY DETECTION
@@ -95,60 +95,65 @@ const UserTest = () => {
             </Title>
           </div>
         </div>
-        <div style={{marginTop: '3%', paddingRight: '2%'}}>
+        <div style={{ marginTop: '3%', paddingRight: '2%' }}>
           <Space>
-            <Text style={{fontSize: '16px'}}>Welcome {username}</Text>
+            <Text style={{ fontSize: '16px' }}>Welcome {username}</Text>
             <Button onClick={handlePageSwitch} style={{ marginLeft: '5%' }}>
               <FaUserDoctor />
             </Button>
-            <Button icon={<LogoutOutlined />} onClick={handleLogout} style={{marginLeft: '10%'}}></Button>
+            <Button icon={<LogoutOutlined />} onClick={handleLogout} style={{ marginLeft: '10%' }}></Button>
           </Space>
         </div>
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div style={{ width: '100%', height: '65vh',padding: '5%', backgroundImage: `url(${test})`,  backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
-          <Row>
-            <Col span={24}>
-              <div>
-                <Text>Please record your voice here</Text>
-              </div>
-
-              <div >
-                <Space>
-                  <ReactMic
-                    record={isRecording}
-                    onStop={onStop}
-                    onData={onData}
-                    mimeType="audio/wav"
-                    echoCancellation={true}
-                  />
-                  <Button type="primary" onClick={toggleRecording} style={{borderRadius: '20px'}}>
-                    <AiFillAudio/>
-                  </Button>
-                </Space>
-              </div>
-
-              <div>
-                <Space>
-                  <div style={{ marginTop: '2%' }}>
-                    {recordedAudioURL && (
-                      <audio controls>
-                        <source src={recordedAudioURL} type="audio/wav" />
-                        Your browser does not support the audio element.
-                      </audio>
-                    )}
+        <div style={{ width: '100%', height: '65vh', padding: '5%', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundImage: `url(${test})` }}>
+          <div style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.3)', display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '20px' }}>
+            <div style={{ marginRight: '48%', marginLeft: '10%', marginBottom: '5%', color: 'white' }}>
+              <Row>
+                <Col span={24}>
+                  <div>
+                    <Title level={3} style={{ color: 'white' }}>Discovering voice pathology begins with precise diagnosis. Our advanced tools and expert analysis offer comprehensive insights for tailored treatment plans, guiding you towards vocal wellness.</Title>
+                    <Text style={{ color: 'white' }}>Please record your voice here</Text>
                   </div>
-                  <Upload customRequest={customRequest} onChange={onFileChange}>
-                    <Button icon={<UploadOutlined />}></Button>
-                  </Upload>
-                  <Button onClick={handleTestButtonClick}>
-                    <AiFillExperiment/>
-                  </Button>
-                </Space>
-              </div>
-            </Col>
-          </Row>
+
+                  <div style={{ marginBottom: '2%', marginTop: '2%' }} >
+                    <Space>
+                      <ReactMic
+                        record={isRecording}
+                        onStop={onStop}
+                        onData={onData}
+                        mimeType="audio/wav"
+                        echoCancellation={true}
+                      />
+                      <Button type="primary" onClick={toggleRecording} style={{ borderRadius: '20px' }}>
+                        <AiFillAudio />
+                      </Button>
+                    </Space>
+                  </div>
+
+                  <div>
+                    <Space>
+                      <div style={{ marginTop: '2%' }}>
+                        {recordedAudioURL && (
+                          <audio controls>
+                            <source src={recordedAudioURL} type="audio/wav" />
+                            Your browser does not support the audio element.
+                          </audio>
+                        )}
+                      </div>
+                      <Upload customRequest={customRequest} onChange={onFileChange}>
+                        <Button icon={<UploadOutlined />}></Button>
+                      </Upload>
+                      <Button onClick={handleTestButtonClick}>
+                        <AiFillExperiment />
+                      </Button>
+                    </Space>
+                  </div>
+                </Col>
+              </Row>
+            </div>
+          </div>
         </div>
       </div>
     </div>
