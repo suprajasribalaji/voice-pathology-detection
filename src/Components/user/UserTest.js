@@ -116,7 +116,7 @@ const UserTest = () => {
                     <Title level={3} style={{ color: 'white' }}>Embark on a journey of vocal discovery with precise diagnostics. Tailored insights for vocal rejuvenation through advanced technology and evaluation. Start your experimental analysis journey today with us.</Title>
                   </div>
 
-                  <div style={{ marginBottom: '2%', marginTop: '2%' }} >
+                  <div style={{ marginBottom: '2%', marginTop: '3%' }} >
                     <Space>
                       <ReactMic
                         record={isRecording}
