@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ReactMic } from "react-mic";
-import { Typography, Row, Col, Button, Space, Upload, message } from "antd";
+import { Typography, Row, Col, Button, Space, Upload, message, Tooltip } from "antd";
 import { UploadOutlined, LogoutOutlined } from '@ant-design/icons';
 import { AiFillAudio, AiFillExperiment } from "react-icons/ai";
 import { app } from '../../firebase-config';
@@ -98,10 +98,14 @@ const UserTest = () => {
         <div style={{ marginTop: '3%', paddingRight: '2%' }}>
           <Space>
             <Text style={{ fontSize: '16px' }}>Welcome {username}</Text>
-            <Button onClick={handlePageSwitch} style={{ marginLeft: '5%' }}>
-              <FaUserDoctor />
-            </Button>
-            <Button icon={<LogoutOutlined />} onClick={handleLogout} style={{ marginLeft: '10%' }}></Button>
+            <Tooltip title="Consultation page">
+              <Button onClick={handlePageSwitch} style={{ marginLeft: '5%' }}>
+                <FaUserDoctor />
+              </Button>
+            </Tooltip>
+            <Tooltip title="Logout">
+              <Button icon={<LogoutOutlined />} onClick={handleLogout} style={{ marginLeft: '10%' }}></Button>
+            </Tooltip>
           </Space>
         </div>
       </div>
@@ -109,7 +113,7 @@ const UserTest = () => {
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <div style={{ width: '100%', height: '65vh', padding: '5%', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundImage: `url(${test})` }}>
           <div style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.3)', display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '20px' }}>
-            <div style={{ marginRight: '48%', marginLeft: '10%', marginBottom: '5%', color: 'white' }}>
+            <div style={{ marginRight: '30rem', marginLeft: '4rem', marginBottom: '5%', color: 'white' }}>
               <Row>
                 <Col span={24}>
                   <div>
@@ -125,9 +129,11 @@ const UserTest = () => {
                         mimeType="audio/wav"
                         echoCancellation={true}
                       />
+                     <Tooltip title="Record your voice">
                       <Button type="primary" onClick={toggleRecording} style={{ borderRadius: '20px' }}>
-                        <AiFillAudio />
-                      </Button>
+                          <AiFillAudio />
+                        </Button>
+                     </Tooltip>
                     </Space>
                   </div>
 
@@ -141,12 +147,16 @@ const UserTest = () => {
                           </audio>
                         )}
                       </div>
-                      <Upload customRequest={customRequest} onChange={onFileChange}>
-                        <Button icon={<UploadOutlined />}></Button>
-                      </Upload>
-                      <Button onClick={handleTestButtonClick}>
-                        <AiFillExperiment />
-                      </Button>
+                      <Tooltip title="Upload voice from local">
+                        <Upload customRequest={customRequest} onChange={onFileChange}>
+                          <Button icon={<UploadOutlined />}></Button>
+                        </Upload>
+                      </Tooltip>
+                      <Tooltip title="Test the recorded voice">
+                        <Button onClick={handleTestButtonClick}>
+                          <AiFillExperiment />
+                        </Button>
+                      </Tooltip>
                     </Space>
                   </div>
                 </Col>

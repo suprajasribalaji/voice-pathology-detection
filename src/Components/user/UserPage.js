@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Layout, Menu, Typography, theme } from 'antd';
+import { Button, Layout, Menu, Tooltip, Typography, theme } from 'antd';
+import { LogoutOutlined } from '@ant-design/icons';
 import { useAuth } from '../Authentication';
 import DoctorDetails from '../consultation/DoctorDetails';
 import Medisync from '../medication/Medisync';
@@ -65,9 +66,9 @@ const UserPage = () => {
             <p>Welcome {username}</p>
           </div>
           <div>
-            <Button type="primary" onClick={handleLogout}>
-              Logout
-            </Button>
+            <Tooltip title="Logout">
+              <Button icon={<LogoutOutlined />} onClick={handleLogout} style={{ marginLeft: '10%' }}></Button>
+            </Tooltip>
           </div>
         </div>
       </Header>

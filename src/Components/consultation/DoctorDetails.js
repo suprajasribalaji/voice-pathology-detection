@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Divider, Typography } from 'antd';
+import { Button, Card, Divider, Tooltip, Typography } from 'antd';
+import { IoCalendar } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
 import { firestore } from '../../firebase-config';
 import { collection,  getDocs } from 'firebase/firestore';
@@ -38,21 +39,28 @@ const DoctorDetails = () => {
         <div>
             <Title level={4}>AVAILABLE DOCTORS</Title>
             <br />
-            {doctors.map((doctor, index) => (
-                <div key={index}>
-                    <Card type="inner" title={`Dr. ${doctor.name}`}>
-                        <div>
-                            <p>Years of Experience: {doctor.experience}</p>
-                            <p>Specialization: {doctor.specialization}</p>
-                            <p>Contact: {doctor.Email}</p>
-                            <p>Clinic Address: {doctor.clinicAddress}</p>
-                            <div style={{ marginTop: '2%' }}>
-                                <Button type="primary" onClick={() => handleBook(doctor.name,doctor.Email)}>
-                                    Book Appointment
-                                </Button>
+                {doctors.map((doctor, index) => (
+                    <div key={index}>
+                        <Card
+                            type="inner"
+                            title={
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span>{`Dr. ${doctor.name}`}</span>
+                                <Tooltip title="Book Appointment"> 
+                                    <Button type="primary" onClick={() => handleBook(doctor.name, doctor.Email)}>
+                                        <IoCalendar />
+                                    </Button>
+                                </Tooltip>
+                                </div>
+                            }
+                        >
+                            <div>
+                                <p>Years of Experience: {doctor.experience}</p>
+                                <p>Specialization: {doctor.specialization}</p>
+                                <p>Contact: {doctor.Email}</p>
+                                <p>Clinic Address: {doctor.clinicAddress}</p>
                             </div>
-                        </div>
-                    </Card>
+                        </Card>
                     <Divider />
                 </div>
             ))}
