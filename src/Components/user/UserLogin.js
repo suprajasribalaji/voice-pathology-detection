@@ -5,6 +5,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, message, Select } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Authentication';
+import axios from 'axios';
 
 const { Option } = Select;
 
@@ -24,22 +25,22 @@ const CollectionCreateForm = ({ open, Adduser, onCancel }) => {
     <Modal
       open={open}
       title="Create a new account"
-      okText="Register"
+      okText="Sign Up"
       cancelText="Cancel"
       onCancel={onCancel}
       onOk={() => {
         form
           .validateFields()
           .then((values) => {
-           form.resetFields();
-          Adduser(values);
+            form.resetFields();
+            Adduser(values);
           })
           .catch((info) => {
             console.log('Validate Failed:', info);
           });
       }}
     >
-      <br/>
+      <br />
       <Form
         form={form}
         name="register"
@@ -47,18 +48,18 @@ const CollectionCreateForm = ({ open, Adduser, onCancel }) => {
           prefix: '91',
         }}
       >
-      <Form.Item
-        label="Username"
-        name="username"
-        rules={[
-          {
-            required: true,
-            message: 'Please input your username!',
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
+        <Form.Item
+          label="Username"
+          name="username"
+          rules={[
+            {
+              required: true,
+              message: 'Please input your username!',
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
 
         <Form.Item
           name="email"
@@ -153,61 +154,72 @@ const CollectionCreateForm = ({ open, Adduser, onCancel }) => {
 const UserLogin = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [email, setEmail] = useState(''); 
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const authenticate = useAuth();
-  
+
   const Adduser = async (values) => {
     const { username, confirm, phone, gender, email } = values;
-  
+
     try {
       const collectionRef = collection(firestore, 'PatientsDB');
       const valiate_email = await getDocs(query(collectionRef, where('Email', '==', email)));
-      const validate_phone = await getDocs(query(collectionRef,where('Phone_number','==',phone)))
-      if (valiate_email.docs.length === 0 && validate_phone.docs.length===0) {
-        await addDoc(collectionRef, {
-          Email: email,
-          Gender: gender,
-          Username: username,
-          Phone_number: phone,
-          Password: confirm
-        });
-        message.success('Account created successfully! Please login to continue');
-        setOpen(false);
-      } else {
-       if(validate_phone.docs.length>0)
-       {
-        message.error(" Phone Number Already Exists. Please Try With Any Other Mail ID");
-       }
-       else
-       {
-        message.error("Email Id Already Exists. Please Try With Any Other Mail ID");
-       }
+      const validate_phone = await getDocs(query(collectionRef, where('Phone_number', '==', phone)))
+
+      const addphone = await axios.post('http://localhost:3001/user-signup', {
+        to: { phone, username }
+      })
+      if (addphone.res.status === 200) {
+        message.success("Please Enter the Veriefication Here")
+
+
+        if (valiate_email.docs.length === 0 && validate_phone.docs.length === 0) {
+          await addDoc(collectionRef, {
+            Email: email,
+            Gender: gender,
+            Username: username,
+            Phone_number: phone,
+            Password: confirm
+          });
+          message.success('Account created successfully! Please login to continue');
+          setOpen(false);
+        } else {
+          if (validate_phone.docs.length > 0) {
+            message.error(" Phone Number Already Exists. Please Try With Any Other Mail ID");
+          }
+          else {
+            message.error("Email Id Already Exists. Please Try With Any Other Mail ID");
+          }
+        }
+      }
+
+      else {
+        message.error("Not Veriefied");
       }
     } catch (error) {
       console.error('Error adding user: ', error);
     }
   };
-   
+
   const onFinish = (values) => {
     console.log('Received values of form: ', values);
   };
 
-  
+
   const handleLogin = async () => {
     const collectionRef = collection(firestore, 'PatientsDB');
     console.log(collectionRef);
-  
+
     try {
       const querySnapshot = await getDocs(
         query(collectionRef, where('Email', '==', email), where('Password', '==', password))
       );
-  
+
       if (!querySnapshot.empty) {
         const user = querySnapshot.docs[0].data();
-        const { Username,Email } = user;
-        authenticate.userLogin(Username,Email);
+        const { Username, Email } = user;
+        authenticate.userLogin(Username, Email);
         message.success('User logged in successfully');
         navigate('/usertest');
       } else {
@@ -218,11 +230,11 @@ const UserLogin = () => {
       console.error('Error logging in:', error.message);
     }
   };
-  
+
 
   return (
     <div>
-        <Form
+      <Form
         name="normal_login"
         className="login-form"
         initialValues={{
@@ -240,9 +252,9 @@ const UserLogin = () => {
           ]}
         >
           <Input prefix={<UserOutlined />} placeholder="Enter Your Mail Id"
-           onChange={(e) => setEmail(e.target.value)} />
+            onChange={(e) => setEmail(e.target.value)} />
         </Form.Item>
-        
+
         <Form.Item
           name="password"
           rules={[
@@ -266,13 +278,13 @@ const UserLogin = () => {
 
         <Form.Item>
           Don't have an account?
-              <Button
-                type="link"
-                style={{ fontWeight: 'bold', color: 'white' }}
-                onClick={() => setOpen(true)}
-              >
-                Register Now!
-              </Button>
+          <Button
+            type="link"
+            style={{ fontWeight: 'bold', color: 'white' }}
+            onClick={() => setOpen(true)}
+          >
+            Register Now!
+          </Button>
           <CollectionCreateForm
             open={open}
             Adduser={Adduser}

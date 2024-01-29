@@ -12,7 +12,6 @@ const Medisync = () => {
     const [isViewCart, setViewCart] = useState(false);
     const collectionRef = collection(firestore, 'MedicinesDB');
     const [mycart, setMycart] = useState([]);
-
     const handleAddToCart = async (medicine_name) => {
         try {
             await addDoc(collectionRef, {
@@ -54,8 +53,10 @@ const Medisync = () => {
     };
 
     useEffect (()=>{
-         handleMycart();
-    },[mycart])
+        if (isViewCart) {
+            handleMycart();
+          }
+    },[isViewCart,mycart])
 
     const handleBuy = () => {
         navigate('/payment');

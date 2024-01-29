@@ -13,7 +13,7 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
     <Modal
       open={open}
       title="Details of Doctor"
-      okText="Create"
+      okText="Add Doctor"
       cancelText="Cancel"
       onCancel={onCancel}
       onOk={() => {
@@ -147,6 +147,7 @@ const AdminPage = () => {
   const [casesDetails, setCasesDetails] = useState([]);
   const [filteredCases, setFilteredCases] = useState([]);
   const [isListMedicines, setListMedicines] = useState(false);
+  const [medicineDetails, setMedicineDetails] = useState([]);
 
   const handleCreatenewDoctor = async (values) => {
     try {
@@ -158,19 +159,30 @@ const AdminPage = () => {
         const querySnapshot = await getDocs(collectionRef);
         const updatedDoctorDetails = querySnapshot.docs.map((doc) => doc.data());
         setDoctorDetails(updatedDoctorDetails);
+
         const newaccount_mail = await axios.post("http://localhost:3001/send-mail-newaccount-doctor", {
           to: values.Email,
           subject: `Welcome Dr.${values.name} Your New Account Has Been Created..!!`,
           text: `Note Please Keep your ACCESS CREDIENTIALS in Secure Manner \n Gmail:${values.Email}\n Password:${values.Password}`,
         })
+
+        
         setOpen(false);
         if (newaccount_mail.status === 200) {
           message.success('Doctor added successfully!');
         }
       }
       else {
-        message.error("Mail ID  or Phone Number Already Exists. Try With other")
+        if (validate_email.docs.length !== 0) {
+          message.error("Mail ID  Already Exists. Try With other")
+        }
+
+        else if (validate_phone.docs.length !== 0) {
+          message.error("Phone Number Already Exists. Try With other")
+        }
+
       }
+
 
     } catch (error) {
       message.error('Failed to add doctor. Please try again.');
@@ -219,24 +231,52 @@ const AdminPage = () => {
         setCasesDetails(data);
       }
       else if (collectionName === 'MedicinesDB') {
-        setListMedicines(data);
+        setMedicineDetails(data);
       }
     } catch (error) {
       console.error(`Error fetching ${collectionName} data:`, error);
     }
   };
 
-  useEffect(() => {
-    fetchData('DoctorsDB');
-  }, [isListDoctors]);
+  const listDoctors = () => {
+    setListDoctors(true);
+    setListCases(false);
+    setListMedicines(false);
+    fetchData('DoctorsDB')
+  };
+
+  const listCases = () => {
+    setListCases(true);
+    setListDoctors(false);
+    setListMedicines(false);
+    setFilteredCases([]);
+    fetchData('CasesDB');
+  };
+
+  const handleLogout = () => {
+    navigate('/');
+  };
+
+  const listMedicines = () => {
+    setListMedicines(true);
+    setListDoctors(false);
+    setListCases(false);
+    fetchData('MedicinesDB')
+  }
+
+  // useEffect(() => {
+  //   fetchData('DoctorsDB');
+  // }, [isListDoctors]); .. automatically re-renders when the component is updated so dont need of useEffect
 
   useEffect(() => {
     fetchData('CasesDB');
   }, [isListCases]);
 
   useEffect(() => {
-    fetchData('MedicinesDB');
-}, [isListMedicines])
+    if (isListCases) {
+      fetchData('MedicinesDB');
+    }
+  }, [isListMedicines])
 
 
   const columns = [
@@ -354,28 +394,6 @@ const AdminPage = () => {
     }
   ];
 
-  const listDoctors = () => {
-    setListDoctors(true);
-    setListCases(false);
-  };
-
-  const listCases = () => {
-    setListCases(true);
-    setListDoctors(false);
-    setFilteredCases([]);
-    fetchData('CasesDB');
-  };
-
-  const handleLogout = () => {
-    navigate('/');
-  };
-
-  const listMedicines = () => {
-    setListMedicines(true);
-    setListDoctors(false);
-    setListCases(false);  
-    fetchData('MedicinesDB')
-  }
 
   return (
     <div style={{ margin: '2%' }}>
@@ -420,7 +438,7 @@ const AdminPage = () => {
 
       {isListMedicines && (
         <Card title="Medicine's Details" style={{ marginTop: '2%' }}>
-          <Table columns={medicine_columns} dataSource={isListMedicines} />
+          <Table columns={medicine_columns} dataSource={medicineDetails} />
         </Card>
       )}
 
