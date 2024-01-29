@@ -167,11 +167,6 @@ const UserLogin = () => {
       const valiate_email = await getDocs(query(collectionRef, where('Email', '==', email)));
       const validate_phone = await getDocs(query(collectionRef, where('Phone_number', '==', phone)))
 
-      const addphone = await axios.post('http://localhost:3001/user-signup', {
-        to: { phone, username }
-      })
-      if (addphone.res.status === 200) {
-        message.success("Please Enter the Veriefication Here")
 
 
         if (valiate_email.docs.length === 0 && validate_phone.docs.length === 0) {
@@ -182,7 +177,7 @@ const UserLogin = () => {
             Phone_number: phone,
             Password: confirm
           });
-          message.success('Account created successfully! Please login to continue');
+      message.success('Account created successfully! Please login to continue');
           setOpen(false);
         } else {
           if (validate_phone.docs.length > 0) {
@@ -193,11 +188,9 @@ const UserLogin = () => {
           }
         }
       }
-
-      else {
-        message.error("Not Veriefied");
-      }
-    } catch (error) {
+    
+    
+     catch (error) {
       console.error('Error adding user: ', error);
     }
   };
