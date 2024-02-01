@@ -8,6 +8,7 @@ import Booking from './Components/consultation/Booking';
 import Payment from './Components/medication/Payment';
 import { AuthProvider, useAuth } from './Components/Authentication';
 import DoctorPage from './Components/doctor/Doctorpage';
+import {message} from 'antd';
 function ProtectedRoute({ children, Element }) {
   const { user, admin, doctor } = useAuth();
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ function ProtectedRoute({ children, Element }) {
   useEffect(() => {
     const checkAuthentication = (authType, isAuthenticated) => {
       if (!isAuthenticated) {
-        alert(`You are not authenticated as ${authType}. Redirecting to the home page.`);
+      message.error(`You are not authenticated as ${authType}. Redirecting to the Homepage.`);
         navigate('/');
       }
     };
