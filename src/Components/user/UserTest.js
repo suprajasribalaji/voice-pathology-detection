@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { ReactMic } from "react-mic";
-import { Typography, Row, Col, Button, Space, Upload, message, Tooltip } from "antd";
+import { Typography, Row, Col, Button, Space, Upload, message } from "antd";
 import { UploadOutlined, LogoutOutlined } from '@ant-design/icons';
-import { AiFillAudio, AiFillExperiment } from "react-icons/ai";
+import { AiOutlineUser, AiFillExperiment } from "react-icons/ai";
+import { MdSettingsVoice } from "react-icons/md";
 import { app } from '../../firebase-config';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Authentication";
 import test from "../../images/TestPage.jpg";
-import { FaUserDoctor } from "react-icons/fa6"
 
 const { Title, Text } = Typography;
 
@@ -85,8 +85,8 @@ const UserTest = () => {
 
   return (
     <div style={{ background: 'rgba(255, 255, 255, 0.9)' }}>
-      <div style={{ marginLeft: '2%', display: 'flex', justifyContent: 'space-between' }}>
-        <div style={{ marginBottom: '1%' }}>
+      <div style={{ marginLeft: '2%', display: 'flex', justifyContent: 'space-between', }}>
+        <div>
           <div>
             <Title level={4}>
               VOICE PATHOLOGY DETECTION
@@ -97,27 +97,22 @@ const UserTest = () => {
         </div>
         <div style={{ marginTop: '3%', paddingRight: '2%' }}>
           <Space>
-            <Text style={{ fontSize: '16px' }}>Welcome {username}</Text>
-            <Tooltip title="Consultation page">
-              <Button onClick={handlePageSwitch} style={{ marginLeft: '5%' }}>
-                <FaUserDoctor />
-              </Button>
-            </Tooltip>
-            <Tooltip title="Logout">
-              <Button icon={<LogoutOutlined />} onClick={handleLogout} style={{ marginLeft: '10%' }}></Button>
-            </Tooltip>
+            {/* <Title level={4}>Welcome, {username}</Title> */}
+            <Button onClick={handlePageSwitch} icon={<AiOutlineUser />} style={{ marginLeft: '5%' }}>Consultation</Button>
+            <Button onClick={handleLogout} icon={<LogoutOutlined />} style={{ marginLeft: '10%' }}>Logout</Button>          
           </Space>
         </div>
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div style={{ width: '100%', height: '65vh', padding: '5%', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundImage: `url(${test})` }}>
-          <div style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.3)', display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '20px' }}>
+        <div style={{ width: '100%', height: '67vh', padding: '5%', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundImage: `url(${test})` }}>
+          <div style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.2)', display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '20px' }}>
             <div style={{ marginRight: '30rem', marginLeft: '4rem', marginBottom: '5%', color: 'white' }}>
               <Row>
                 <Col span={24}>
                   <div>
-                    <Title level={3} style={{ color: 'white' }}>Embark on a journey of vocal discovery with precise diagnostics. Tailored insights for vocal rejuvenation through advanced technology and evaluation. Start your experimental analysis journey today with us.</Title>
+                    <Title level={4} style={{ color: 'white' }}>Hey, have you heard about discovering precise vocal diagnostics through experimental analysis?</Title>
+                    <Text style={{fontSize: '16px'}}>That sounds intriguing! Count me in for the journey!</Text>
                   </div>
 
                   <div style={{ marginBottom: '2%', marginTop: '3%' }} >
@@ -129,11 +124,15 @@ const UserTest = () => {
                         mimeType="audio/wav"
                         echoCancellation={true}
                       />
-                     <Tooltip title="Record your voice">
-                      <Button type="primary" onClick={toggleRecording} style={{ borderRadius: '20px' }}>
-                          <AiFillAudio />
-                        </Button>
-                     </Tooltip>
+                       <Button 
+                       type="primary" 
+                       onClick={toggleRecording} 
+                       className={isRecording ? 'recording' : ''} 
+                       icon={<MdSettingsVoice />}
+                       style={{ marginLeft: '10%' }}
+                       >
+                        {isRecording ? 'Stop Recording' : 'Start Recording'}
+                      </Button>
                     </Space>
                   </div>
 
@@ -147,16 +146,10 @@ const UserTest = () => {
                           </audio>
                         )}
                       </div>
-                      <Tooltip title="Upload voice from local">
-                        <Upload customRequest={customRequest} onChange={onFileChange}>
-                          <Button icon={<UploadOutlined />}></Button>
-                        </Upload>
-                      </Tooltip>
-                      <Tooltip title="Test the recorded voice">
-                        <Button onClick={handleTestButtonClick}>
-                          <AiFillExperiment />
-                        </Button>
-                      </Tooltip>
+                      <Upload customRequest={customRequest} onChange={onFileChange}>
+                        <Button icon={<UploadOutlined />}>Upload Audio File</Button>
+                      </Upload>
+                      <Button type="primary" onClick={handleTestButtonClick} icon={<AiFillExperiment />}>Start Test</Button>
                     </Space>
                   </div>
                 </Col>
