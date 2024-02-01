@@ -1,10 +1,12 @@
 import React from 'react';
 import { Button, Form, Input, DatePicker, message, Typography, Select, Space } from 'antd';
+import { UserOutlined, LogoutOutlined } from '@ant-design/icons'; 
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
 import { firestore } from '../../firebase-config';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Authentication';
 import axios from 'axios';
+import fillForm from '../../images/BookAppointment.jpg';
 const { Title, Text } = Typography;
 const { Option } = Select;
 
@@ -71,7 +73,7 @@ const Booking = () => {
   };
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       <div style={{ marginLeft: '2%', display: 'flex', justifyContent: 'space-between' }}>
         <div>
           <div>
@@ -82,18 +84,17 @@ const Booking = () => {
             </Title>
           </div>
         </div>
-        <div style={{marginTop: '2%', paddingRight: '2%'}}>
+        <div style={{ marginTop: '3%', paddingRight: '2%' }}>
           <Space>
-            <Text type="primary" >Welcome {user}</Text>
-            <Button type="primary" onClick={handleLogout} style={{marginLeft: '10%'}}>
-              Logout
-            </Button>
+            <Text style={{ fontSize: '15px' }}><UserOutlined/> Welcome, {user}</Text>
+            <Button onClick={handleLogout} icon={<LogoutOutlined />} style={{ marginLeft: '10%' }}>Logout</Button>          
           </Space>
         </div>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '4%' }}>
-        <div>
+      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', marginTop: '1%', width: '100%', height: '86vh', backgroundImage: `url(${fillForm})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backdropFilter: 'blur(8px)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left', alignItems: 'center', marginTop: '6%' }}>
           <Title level={3} style={{ textAlign: 'center' }}>
             Book Your Appointment Here
           </Title>
@@ -209,6 +210,7 @@ const Booking = () => {
                     </Button>
                 </Form.Item>
             </Form>
+          </div>
         </div>
       </div>
     </div>
@@ -216,4 +218,3 @@ const Booking = () => {
 };
 
 export default Booking;
-
