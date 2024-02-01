@@ -85,7 +85,7 @@ const UserTest = () => {
 
   return (
     <div style={{ background: 'rgba(255, 255, 255, 0.9)' }}>
-      <div style={{ marginLeft: '2%', display: 'flex', justifyContent: 'space-between', }}>
+      <div style={{ marginLeft: '2%', display: 'flex', justifyContent: 'space-between' }}>
         <div>
           <div>
             <Title level={4}>
@@ -105,13 +105,14 @@ const UserTest = () => {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div style={{ width: '100%', height: '67vh', padding: '5%', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <div style={{ marginRight: '30rem', marginLeft: '4rem', marginBottom: '5%' }}>
+        <div style={{ position: 'relative', width: '100%', height: '67vh', padding: '5%', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundImage: `url(${test})` }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.2)', display: 'flex', justifyContent: 'center', alignItems: 'center'
+          , backdropFilter: 'blur(5px)' }}>
+            <div style={{ marginRight: '30rem', marginLeft: '4rem', marginBottom: '5%', color: 'white' }}>
               <Row>
                 <Col span={24}>
                   <div>
-                    <Title level={4}>Hey, have you heard about discovering precise vocal diagnostics through experimental analysis?</Title>
+                    <Title level={4} style={{ color: 'white' }}>Hey, have you heard about discovering precise vocal diagnostics through experimental analysis?</Title>
                     <Text style={{fontSize: '16px'}}>That sounds intriguing! Count me in for the journey!</Text>
                   </div>
 
