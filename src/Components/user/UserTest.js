@@ -105,13 +105,13 @@ const UserTest = () => {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div style={{ width: '100%', height: '67vh', padding: '5%', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundImage: `url(${test})` }}>
-          <div style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.2)', display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '20px' }}>
-            <div style={{ marginRight: '30rem', marginLeft: '4rem', marginBottom: '5%', color: 'white' }}>
+        <div style={{ width: '100%', height: '67vh', padding: '5%', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <div style={{ marginRight: '30rem', marginLeft: '4rem', marginBottom: '5%' }}>
               <Row>
                 <Col span={24}>
                   <div>
-                    <Title level={4} style={{ color: 'white' }}>Hey, have you heard about discovering precise vocal diagnostics through experimental analysis?</Title>
+                    <Title level={4}>Hey, have you heard about discovering precise vocal diagnostics through experimental analysis?</Title>
                     <Text style={{fontSize: '16px'}}>That sounds intriguing! Count me in for the journey!</Text>
                   </div>
 
