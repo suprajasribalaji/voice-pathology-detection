@@ -46,11 +46,10 @@ const DoctorDetails = () => {
                             title={
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <span>{`Dr. ${doctor.name}`}</span>
-                                <Tooltip title="Book Appointment"> 
                                     <Button type="primary" onClick={() => handleBook(doctor.name, doctor.Email)}>
-                                        <IoCalendar />
+                                        <IoCalendar /> 
+                                        <span style={{ marginLeft: '6%' }}>Book Appointment</span>
                                     </Button>
-                                </Tooltip>
                                 </div>
                             }
                         >
