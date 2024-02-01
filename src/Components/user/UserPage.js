@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Layout, Menu, Tooltip, Typography, theme } from 'antd';
-import { LogoutOutlined } from '@ant-design/icons';
+import { Button, Layout, Menu, Typography, theme } from 'antd';
+import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { useAuth } from '../Authentication';
 import DoctorDetails from '../consultation/DoctorDetails';
 import Medisync from '../medication/Medisync';
@@ -63,19 +63,17 @@ const UserPage = () => {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', marginTop: '1%' }}>
           <div style={{ marginRight: '30px' }}>
-            <p>Welcome {username}</p>
+            <p><UserOutlined /> Welcome {username}</p>
           </div>
           <div>
-            <Tooltip title="Logout">
-              <Button icon={<LogoutOutlined />} onClick={handleLogout} style={{ marginLeft: '10%' }}></Button>
-            </Tooltip>
+              <Button onClick={handleLogout} icon={<LogoutOutlined />} style={{ marginLeft: '8%' }}>Logout</Button>
           </div>
         </div>
       </Header>
       <Content
         style={{
           padding: '1%',
-          height: 'calc(100vh - 134px)',
+          height: 'calc(100vh - 138px)',
         }}
       >
         <Layout
@@ -90,7 +88,7 @@ const UserPage = () => {
             style={{
               background: colorBgContainer,
             }}
-            width={200}
+            width={180}
           >
             <Menu
               mode="inline"
