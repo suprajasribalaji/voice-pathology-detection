@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ReactMic } from "react-mic";
 import { Typography, Row, Col, Button, Space, Upload, message } from "antd";
 import { UploadOutlined, LogoutOutlined } from '@ant-design/icons';
@@ -25,6 +25,17 @@ const UserTest = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordedAudioURL, setRecordedAudioURL] = useState(null);
   const [blobFile, setBlobFile] = useState(null);
+  const [streamlitApp, setStreamlitApp] = useState('');
+  const [isTestStarted, setIsTestStarted] = useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await axios.get('http://localhost:8000/');
+      setStreamlitApp(response.data.streamlit_output);
+      console.log("Data changeddd and called useeffect --->>> ", streamlitApp);
+    }
+    fetchData();
+  }, [isTestStarted]);
 
   const toggleRecording = () => {
     setIsRecording(prevRecordingState => !prevRecordingState);
@@ -39,37 +50,6 @@ const UserTest = () => {
     setBlobFile(recordedData.blob);
     setRecordedAudioURL(URL.createObjectURL(recordedData.blob));
   };
-
-  // const customRequest = async () => {
-  //   const fileName = `audio_${Date.now()}.wav`;
-  //   const fileRef = ref(storageRef, fileName);
-
-  //   try {
-  //     await uploadBytes(fileRef, recordedAudioURL);
-  //     console.log("File uploaded successfully");
-  //     message.success('Audio Uploaded Successfully');
-
-  //     const fileUrl = await getDownloadURL(fileRef);
-
-  //     await addDoc(collection(app.firestore(), 'VoicesDB'), {
-  //       fileUrl,
-  //       timestamp: serverTimestamp(),
-  //     });
-
-  //     console.log("Metadata saved to Firestore");
-  //   } catch (error) {
-  //     console.error("Error uploading file", error);
-  //   }
-  // };
-
-  // const onFileChange = (info) => {
-  //   if (info.file.status === 'done') {
-  //     message.success('File Uploaded Successfully');
-  //     console.log(`${info.file.name} file uploaded successfully`);
-  //   } else if (info.file.status === 'error') {
-  //     console.error(`${info.file.name} file upload failed.`);
-  //   }
-  // };
 
   const handleLogout = () => {
     nav('/');
@@ -86,13 +66,10 @@ const UserTest = () => {
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)
-      const response = await axios.post('http://127.0.0.1:8000/upload-audio', formData)
-      message.success(JSON.stringify(response.data))
-      // const test = await axios.get('http://127.0.0.1:8000/test-result')
-      // message.success("Result: ", JSON.stringify(test.data))
     } catch (error) {
       message.error('Error while uploading the audio')
     }
+    setIsTestStarted(true);
   };
 
   return (
@@ -130,14 +107,14 @@ const UserTest = () => {
 
                   <div style={{ marginBottom: '2%', marginTop: '3%' }} >
                     <Space>
-                      <ReactMic
+                      {/* <ReactMic
                         record={isRecording}
                         onStop={onStop}
                         onData={onData}
                         mimeType="audio/wav"
                         echoCancellation={true}
-                      />
-                       <Button 
+                      /> */}
+                       {/* <Button 
                        type="primary" 
                        onClick={toggleRecording} 
                        className={isRecording ? 'recording' : ''} 
@@ -145,26 +122,30 @@ const UserTest = () => {
                        style={{ marginLeft: '10%' }}
                        >
                         {isRecording ? 'Stop Recording' : 'Start Recording'}
-                      </Button>
+                      </Button> */}
                     </Space>
                   </div>
 
                   <div>
                     <Space>
-                      <div style={{ marginTop: '2%' }}>
+                      {/* <div style={{ marginTop: '2%' }}>
                         {recordedAudioURL && (
                           <audio controls>
                             <source src={recordedAudioURL} type="audio/wav" />
                             Your browser does not support the audio element.
                           </audio>
                         )}
-                      </div>
+                      </div> */}
                       {/* <Upload customRequest={customRequest} onChange={onFileChange}>
                         <Button icon={<UploadOutlined />}>Upload Audio File</Button>
                       </Upload> */}
                       <Button type="primary" onClick={handleTestButtonClick} icon={<AiFillExperiment />}>Start Test</Button>
                     </Space>
+                    <div dangerouslySetInnerHTML={{ __html: streamlitApp }} />
                   </div>
+                  {/* Streamlit output */}
+                  <div dangerouslySetInnerHTML={{ __html: streamlitApp }} />
+                  {/* {setIsTestStarted(false)} */}
                 </Col>
               </Row>
             </div>
