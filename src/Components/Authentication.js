@@ -26,8 +26,6 @@ export const AuthProvider = ({ children }) => {
     setDoctor(null);
   };
 
- 
-
   const setCurrentDoctor = (name,email) => {
     setCurrent_doctor({name,email});
   };

@@ -16,7 +16,7 @@ function ProtectedRoute({ children, Element }) {
   useEffect(() => {
     const checkAuthentication = (authType, isAuthenticated) => {
       if (!isAuthenticated) {
-      message.error(`You are not authenticated as ${authType}. Redirecting to the Homepage.`);
+        message.error(`You are not authenticated as ${authType}. Redirecting to the Homepage.`);
         navigate('/');
       }
     };
@@ -37,8 +37,6 @@ function ProtectedRoute({ children, Element }) {
   } else if (Element === DoctorPage || Element === 'DoctorLogin') {
     return doctor ? children : null;
   }
-
-  
   return null;
 }
 

@@ -10,6 +10,7 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Authentication";
 import test from "../../images/TestPage.jpg";
+import axios from "axios";
 
 const { Title, Text } = Typography;
 
@@ -23,6 +24,7 @@ const UserTest = () => {
 
   const [isRecording, setIsRecording] = useState(false);
   const [recordedAudioURL, setRecordedAudioURL] = useState(null);
+  const [blobFile, setBlobFile] = useState(null);
 
   const toggleRecording = () => {
     setIsRecording(prevRecordingState => !prevRecordingState);
@@ -32,41 +34,42 @@ const UserTest = () => {
     console.log("Data recorded: ", recordedData);
   };
 
-  const onStop = (recordedData) => {
+  const onStop = async (recordedData) => {
     console.log("Recording stopped: ", recordedData);
+    setBlobFile(recordedData.blob);
     setRecordedAudioURL(URL.createObjectURL(recordedData.blob));
   };
 
-  const customRequest = async () => {
-    const fileName = `audio_${Date.now()}.wav`;
-    const fileRef = ref(storageRef, fileName);
+  // const customRequest = async () => {
+  //   const fileName = `audio_${Date.now()}.wav`;
+  //   const fileRef = ref(storageRef, fileName);
 
-    try {
-      await uploadBytes(fileRef, recordedAudioURL);
-      console.log("File uploaded successfully");
-      message.success('Audio Uploaded Successfully');
+  //   try {
+  //     await uploadBytes(fileRef, recordedAudioURL);
+  //     console.log("File uploaded successfully");
+  //     message.success('Audio Uploaded Successfully');
 
-      const fileUrl = await getDownloadURL(fileRef);
+  //     const fileUrl = await getDownloadURL(fileRef);
 
-      await addDoc(collection(app.firestore(), 'VoicesDB'), {
-        fileUrl,
-        timestamp: serverTimestamp(),
-      });
+  //     await addDoc(collection(app.firestore(), 'VoicesDB'), {
+  //       fileUrl,
+  //       timestamp: serverTimestamp(),
+  //     });
 
-      console.log("Metadata saved to Firestore");
-    } catch (error) {
-      console.error("Error uploading file", error);
-    }
-  };
+  //     console.log("Metadata saved to Firestore");
+  //   } catch (error) {
+  //     console.error("Error uploading file", error);
+  //   }
+  // };
 
-  const onFileChange = (info) => {
-    if (info.file.status === 'done') {
-      message.success('File Uploaded Successfully');
-      console.log(`${info.file.name} file uploaded successfully`);
-    } else if (info.file.status === 'error') {
-      console.error(`${info.file.name} file upload failed.`);
-    }
-  };
+  // const onFileChange = (info) => {
+  //   if (info.file.status === 'done') {
+  //     message.success('File Uploaded Successfully');
+  //     console.log(`${info.file.name} file uploaded successfully`);
+  //   } else if (info.file.status === 'error') {
+  //     console.error(`${info.file.name} file upload failed.`);
+  //   }
+  // };
 
   const handleLogout = () => {
     nav('/');
@@ -76,11 +79,20 @@ const UserTest = () => {
     nav('/userpage');
   };
 
-  const handleTestButtonClick = () => {
+  const handleTestButtonClick = async () => {
     const recordedData = { blob: 'dummy-audio-blob' };
     const audioBlob = new Blob([recordedData.blob], { type: 'audio/wav' });
     setRecordedAudioURL(URL.createObjectURL(audioBlob));
-    customRequest();
+    try {
+      const formData = new FormData()
+      formData.append('audio', audioBlob)
+      const response = await axios.post('http://127.0.0.1:8000/upload-audio', formData)
+      message.success(JSON.stringify(response.data))
+      // const test = await axios.get('http://127.0.0.1:8000/test-result')
+      // message.success("Result: ", JSON.stringify(test.data))
+    } catch (error) {
+      message.error('Error while uploading the audio')
+    }
   };
 
   return (
@@ -147,9 +159,9 @@ const UserTest = () => {
                           </audio>
                         )}
                       </div>
-                      <Upload customRequest={customRequest} onChange={onFileChange}>
+                      {/* <Upload customRequest={customRequest} onChange={onFileChange}>
                         <Button icon={<UploadOutlined />}>Upload Audio File</Button>
-                      </Upload>
+                      </Upload> */}
                       <Button type="primary" onClick={handleTestButtonClick} icon={<AiFillExperiment />}>Start Test</Button>
                     </Space>
                   </div>
