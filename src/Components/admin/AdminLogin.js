@@ -1,31 +1,30 @@
 import React, { useState } from 'react';
-import { app, firestore } from '../../firebase-config';
-import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import {LockOutlined, UserOutlined} from '@ant-design/icons'
+import {  firestore } from '../../firebase-config';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { Button, Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../Authentication';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState(''); 
   const [password, setPassword] = useState('');
-
+  const authenticate = useAuth();
   const handleLogin = async () => {
     const collectionRef = collection(firestore, 'AdminDB');
-    console.log(collectionRef);
-  
     try {
-    console.log(email,password);
       const querySnapshot = await getDocs(
         query(collectionRef, where('Email', '==', email), where('Password', '==', password))
       );
   
       if (!querySnapshot.empty) {
-        message.success('User logged in successfully');
-        navigate('/usertest');
-        console.log('User logged in successfully');
+        message.success('Admin logged in successfully');
+        const admin = querySnapshot.docs[0].data();
+        const {name} = admin;
+        authenticate.adminLogin(name);
       } else {
         message.error('Invalid email or password');
-        console.log('Invalid email or password');
       }
     } catch (error) {
       console.error('Error logging in:', error.message);
@@ -44,59 +43,50 @@ const AdminLogin = () => {
 
   return (
     <div>
-      <Form
-        name="basic"
-        labelCol={{
-          span: 8,
-        }}
-        wrapperCol={{
-          span: 16,
-        }}
-        style={{
-          maxWidth: 600,
-        }}
+       <Form
+        name="normal_login"
+        className="login-form"
         initialValues={{
           remember: true,
         }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
-        autoComplete="off"
       >
         <Form.Item
-          label="Email"
           name="email"
           rules={[
             {
               required: true,
-              message: 'Please input Email id!',
+              message: 'Please input your Email!',
             },
           ]}
-          onChange={(e) => setEmail(e.target.value)}
         >
-          <Input  />
+          <Input prefix={<UserOutlined />} placeholder="Enter Admin's Mail Id"
+           onChange={(e) => setEmail(e.target.value)} />
         </Form.Item>
-
+        
         <Form.Item
-          label="Password"
           name="password"
           rules={[
             {
               required: true,
-              message: 'Please input your password!',
+              message: 'Please input your Password!',
             },
           ]}
         >
-          <Input.Password 
-            onChange={(e) => setPassword(e.target.value)} />
+          <Input
+            prefix={<LockOutlined />}
+            type="password"
+            placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </Form.Item>
 
-        <Form.Item
-          wrapperCol={{
-            offset: 8,
-            span: 16,
-          }}
-        >
-          <Button type="primary" onClick={handleLogin}>Login</Button>
+        <Form.Item>
+          <Button type="primary" onClick={handleLogin}>Log in</Button>
+        </Form.Item>
+        <Form.Item style={{ textAlign: 'right' }}>
+          <span>Let's conquer the day with    <span style={{color: 'white'}}>  Productivity!</span></span>
         </Form.Item>
       </Form>
     </div>

@@ -1,24 +1,23 @@
-import React, { createContext, useContext, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [admin, setAdmin] = useState(null);
   const [doctor, setDoctor] = useState(null);
-  const nav = useNavigate
-  const userLogin = (userData) => {
-    setUser(userData);
-    console.log(user);
+  const [current_doctor, setCurrent_doctor] = useState(null);
 
+  const userLogin = (userName,userEmail) => {
+    setUser({ userName,userEmail });
   };
 
   const adminLogin = (adminData) => {
     setAdmin(adminData);
   };
 
-  const doctorLogin = (doctorData) => {
-    setDoctor(doctorData);
+  const doctorLogin = (name, email) => {
+    setDoctor({ name, email });
   };
 
   const userLogout = () => {
@@ -27,8 +26,28 @@ export const AuthProvider = ({ children }) => {
     setDoctor(null);
   };
 
+  const setCurrentDoctor = (name,email) => {
+    setCurrent_doctor({name,email});
+  };
+
+  useEffect(() => {
+    console.log('Updated User:', user);
+  }, [user]);
+
   return (
-    <AuthContext.Provider value={{ user, admin, doctor, userLogin, adminLogin, doctorLogin, userLogout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        admin,
+        doctor,
+        userLogin,
+        adminLogin,
+        doctorLogin,
+        userLogout,
+        setCurrentDoctor,
+        current_doctor,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -38,6 +57,4 @@ export const useAuth = () => {
   return useContext(AuthContext);
 };
 
-export const isAuthenticated = ({ user, admin, doctor }) => {
-  return !!user || !!admin || !!doctor;
-};
+export default AuthProvider;
