@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { firestore } from '../../firebase-config';
+import { app, firestore } from '../../firebase-config';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { Button, Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../Authentication';
 
 const onFinish = (values) => {
   console.log('Success:', values);
@@ -18,20 +16,20 @@ const DoctorLogin = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const authenticate = useAuth();
 
   const handleLogin = async () => {
-    const collectionRef = collection(firestore, 'DoctorsDB');
+    const collectionRef = collection(firestore, 'DoctorDB');
+    console.log(collectionRef);
+
     try {
+      console.log(email, password);
       const querySnapshot = await getDocs(
         query(collectionRef, where('Email', '==', email), where('Password', '==', password))
       );
 
       if (!querySnapshot.empty) {
-        message.success('Doctor logged in successfully');
-        const doctor = querySnapshot.docs[0].data();
-        const { name, Email } = doctor;
-        authenticate.doctorLogin(name, Email);
+        message.success('User logged in successfully');
+        console.log('User logged in successfully');
         navigate('/doctor');
       } else {
         message.error('Invalid email or password');
@@ -40,58 +38,68 @@ const DoctorLogin = () => {
     } catch (error) {
       console.error('Error logging in:', error.message);
     }
+
+    
   };
 
   return (
     <div>
       <Form
-        name="normal_login"
-        className="login-form"
+        name="basic"
+        labelCol={{
+          span: 8,
+        }}
+        wrapperCol={{
+          span: 16,
+        }}
+        style={{
+          maxWidth: 600,
+        }}
         initialValues={{
           remember: true,
         }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
+        autoComplete="off"
       >
         <Form.Item
-          name="email"
+          label="Doctor Mail"
+          name="doctorId"
           rules={[
             {
               required: true,
-              message: 'Please input your Email!',
+              message: 'Please input your Mail Id!',
             },
           ]}
+          onChange={(e) => setEmail(e.target.value)}
         >
-          <Input prefix={<UserOutlined />} placeholder="Enter Doctor's Mail Id" onChange={(e) => setEmail(e.target.value)} />
+          <Input />
         </Form.Item>
 
         <Form.Item
+          label="Password"
           name="password"
           rules={[
             {
               required: true,
-              message: 'Please input your Password!',
+              message: 'Please input your password!',
             },
           ]}
+          onChange={(e) => setPassword(e.target.value)}
         >
-          <Input
-            prefix={<LockOutlined />}
-            type="password"
-            placeholder="Password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <Input.Password />
         </Form.Item>
 
-        <Form.Item>
+        <Form.Item
+          wrapperCol={{
+            offset: 8,
+            span: 16,
+          }}
+        >
           <Button type="primary" onClick={handleLogin}>
-            Log in
+            Login
           </Button>
         </Form.Item>
-
-        <Form.Item style={{ textAlign: 'right' }}>
-          <span>Don't have an account?   <span style={{color: 'white'}}>  Contact Admin!</span></span>
-        </Form.Item>
-
       </Form>
     </div>
   );

@@ -1,66 +1,60 @@
 import React, { useState } from 'react';
-import { Button, Space, Typography } from 'antd';
+import { Cascader, Button, Typography } from 'antd';
 import AdminLogin from './admin/AdminLogin';
 import UserLogin from './user/UserLogin';
 import DoctorLogin from './doctor/DoctorLogin';
-import loginImage from '../images/LoginPage.jpg';
+
 
 const { Title, Text } = Typography;
 
 const Dashboard = () => {
-  const [currentAccess, setCurrentAccess] = useState('User');
+  const [currentAccess, setCurrentAccess] = useState("");
 
-  const handleAccessChange = (access) => {
-    setCurrentAccess(access);
+  const onChange = (value) => {
+    setCurrentAccess(value[0]);
   };
 
+  const options = [
+    {
+      label: 'User',
+      value: 'user',
+    },
+    {
+      label: 'Admin',
+      value: 'admin',
+    },
+    {
+      label: 'Doctor',
+      value: 'doctor',
+    },
+  ];
+
+  const displayRender = (labels) => labels[labels.length - 1];
+
   return (
-    <div style={{ width: '100%', height: '100vh', display: 'flex', backgroundColor: 'white', backgroundImage: `url(${loginImage})`, backgroundSize: 'cover', backgroundPosition: 'center', alignItems: 'center', justifyContent: 'center' }}>
-      <div className='divContainer' style={{ display: 'flex', width: '60%', height: '56%', borderRadius: '20px', background: 'rgba(255, 255, 255, 0.10)' }}>
-        <div style={{ paddingLeft: '8%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
-          <div>
-            <Title level={2}>
-              VOICE PATHOLOGY DETECTION
-              <br />
-              <Text>Test your pathology</Text>
-            </Title>
-          </div>
+    <div style={{ display: 'flex', marginTop: '5%', padding: '10%', paddingTop: '10%' }}>
+      <div>
+        <div>
+          <Title level={2}>
+            VOICE PATHOLOGY DETECTION
+            <br />
+            <Text>Test your pathology</Text>
+          </Title>
         </div>
-        <div style={{ flex: 1, paddingTop: '3%', marginRight: '14%' }}>
-          <Space style={{flex:1,marginLeft:'25%'}}>
-            <Button
-              type='link'
-              style={{ color: 'black', fontSize: '16px', border: 'none', borderBottom: currentAccess === 'User' ? '2px solid #1890ff' : 'none' }}
-              onClick={() => handleAccessChange('User')}
-              onMouseEnter={() => handleAccessChange('User')}
-            >
-              USER
-            </Button>
-            <Button
-              type='link'
-              style={{ color: 'black', fontSize: '16px', border: 'none', borderBottom: currentAccess === 'Doctor' ? '2px solid #1890ff' : 'none' }}
-              onClick={() => handleAccessChange('Doctor')}
-              onMouseEnter={() => handleAccessChange('Doctor')}
-            >
-              DOCTOR
-            </Button>
-            <Button
-              type='link'
-              style={{ color: 'black', fontSize: '16px', border: 'none', borderBottom: currentAccess === 'Admin' ? '2px solid #1890ff' : 'none' }}
-              onClick={() => handleAccessChange('Admin')}
-              onMouseEnter={() => handleAccessChange('Admin')}
-            >
-              ADMIN
-            </Button>
-          </Space>
-          <div style={{ borderRadius: '20px', height: '80%', width: '120%', paddingTop: '2%', marginTop: '4%', background: 'rgba(255, 255, 255,0.10)', fontWeight: 'bold'}}>
-            <div style={{ marginTop: '4%', marginLeft: '15%' }}>
-              <Text style={{ fontSize: '18px' }}>Welcome {currentAccess}!!</Text>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingTop: '4%', marginTop: '2%', marginLeft: '15%',paddingLeft:'45px'}}>
-              {currentAccess === 'Admin' ? <AdminLogin /> : currentAccess === 'Doctor' ? <DoctorLogin /> : <UserLogin />}
-            </div>
-          </div>
+        <div>
+          <Cascader
+            options={options}
+            expandTrigger="hover"
+            displayRender={displayRender}
+            onChange={onChange}
+          >
+            <Button type="link" style={{ fontSize: '15px' }}>LOGIN</Button>
+          </Cascader>
+        </div>
+      </div>
+      <div style={{ marginLeft: '16%' }}>
+        <div>
+          {currentAccess === 'admin' ? <AdminLogin /> : (currentAccess === 'doctor' ? <DoctorLogin /> : <UserLogin />)}
         </div>
       </div>
     </div>

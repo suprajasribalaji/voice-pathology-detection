@@ -1,115 +1,71 @@
 import React from 'react';
-import { Button, Form, Input, DatePicker, message, Typography, Select, Space } from 'antd';
-import { UserOutlined, LogoutOutlined } from '@ant-design/icons'; 
+import { Button, Form, Input, DatePicker, message } from 'antd';
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
 import { firestore } from '../../firebase-config';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../Authentication';
-import axios from 'axios';
-import fillForm from '../../images/BookAppointment.jpg';
-const { Title, Text } = Typography;
-const { Option } = Select;
-
-const genderOptions = [
-  { value: 'male', label: 'Male' },
-  { value: 'female', label: 'Female' },
-  { value: 'other', label: 'Other' },
-];
 
 const Booking = () => {
-  const authenticate = useAuth();
-  const user = authenticate.user.userName;
-  const doctormail = authenticate.current_doctor.email;
-  const doctorname = authenticate.current_doctor.name;
-  const [form] = Form.useForm();
-  const nav = useNavigate();
+    const [form] = Form.useForm();
+    const nav = useNavigate();
 
-  const OnBookAppointment = async (values) => {
-    const slotTimestamp = Timestamp.fromDate(values.slot.toDate());
-    let status = 'Not Completed'
-     const dataToStore = {
-      Name: values.name,
-      Email: values.email,
-      Contact: values.contactnumber,
-      Age: values.age,
-      Gender: values.gender,
-      slot: slotTimestamp,
-      Assigned_to:doctormail,
-      caseStatus:status,
+    const onFinish = async (values) => {
+        console.log('Received values of form:', values);
+
+        const slotTimestamp = Timestamp.fromDate(values.slot.toDate());
+
+        const dataToStore = {
+            Name: values.name,
+            Email:values.email,
+            Contact: values.contactnumber,
+            Age_Gender: values.age_gender,
+            slot: slotTimestamp,
+        };
+
+        try {
+            const collectionRef = collection(firestore, 'CasesDB');
+            await addDoc(collectionRef, dataToStore);
+
+            message.success('Case added successfully!');
+            nav('/userpage');
+            form.resetFields();
+        } catch (error) {
+            console.error('Error adding Case:', error);
+            message.error('Failed to add Case. Please try again.');
+        }
     };
 
-    try {
-      const collectionRef = collection(firestore, 'CasesDB');
-      await addDoc(collectionRef, dataToStore);
+    const onFinishFailed = (errorInfo) => {
+        console.log('Failed:', errorInfo);
+    };
 
-      const bookresponse = await axios.post("http://localhost:3001/send-email-newcase-doctor",{
-        to:doctormail,
-        subject:`Hi Dr.${doctorname} You Have A New Case`,
-        text:`Patient Name:${values.name} \nPatient Email:${values.email}\nPatient Contact Number:${values.contactnumber}\nPatient Gender:${values.gender}\nTime Slot:${values.slot}`
-      })
+    const onChange = (date, dateString) => {
+        console.log(date, dateString);
+    };
 
-      if(bookresponse.status===200)
-      {
-      message.success('Appointment Booked Successfully!');
-      nav('/userpage')
-      form.resetFields();
-      }
-    } catch (error) {
-      console.error('Error adding Case:', error);
-      message.error('Failed to add Case. Please try again.');
-    }
-  };
-
-  const OnBookAppointmentFailed = (errorInfo) => {
-    console.error('Failed:', errorInfo);
-  };
-
-  const onChange = (date, dateString) => {
-    console.log(date, dateString);
-  };
-
-  const handleLogout = () => {
-    nav('/');
-  };
-
-  return (
-    <div style={{ position: 'relative' }}>
-      <div style={{ marginLeft: '2%', display: 'flex', justifyContent: 'space-between' }}>
+    return (
         <div>
-          <div>
-            <Title level={5}>
-              VOICE PATHOLOGY DETECTION
-              <br />
-              <Text>Test your pathology</Text>
-            </Title>
-          </div>
-        </div>
-        <div style={{ marginTop: '3%', paddingRight: '2%' }}>
-          <Space>
-            <Text style={{ fontSize: '15px' }}><UserOutlined/> Welcome, {user}</Text>
-            <Button onClick={handleLogout} icon={<LogoutOutlined />} style={{ marginLeft: '10%' }}>Logout</Button>          
-          </Space>
-        </div>
-      </div>
-
-      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', marginTop: '1%', width: '100%', height: '86vh', backgroundImage: `url(${fillForm})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' }}>
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backdropFilter: 'blur(8px)' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left', alignItems: 'center', marginTop: '6%' }}>
-          <Title level={3} style={{ textAlign: 'center' }}>
-            Book Your Appointment Here
-          </Title>
-          <br/>
-          <Form
+            <Form
                 name="basic"
-                initialValues={{ remember: true }}
-                onFinish={OnBookAppointment}
-                onFinishFailed={OnBookAppointmentFailed}
+                labelCol={{
+                    span: 8,
+                }}
+                wrapperCol={{
+                    span: 16,
+                }}
+                style={{
+                    maxWidth: 600,
+                }}
+                initialValues={{
+                    remember: true,
+                }}
+                onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
                 autoComplete="off"
-                form={form}
+                form={form}  
             >
                 <Form.Item
                     label="Full name"
-                    name="name"
+                    name="name" 
                     rules={[
                         {
                             required: true,
@@ -141,53 +97,26 @@ const Booking = () => {
                             required: true,
                             message: 'Please input your contact number!',
                         },
-                        {
-                            pattern: /^[0-9]*$/,
-                            message: 'Please enter only numbers',
-                        },
-                        {
-                            len: 10,
-                            message: 'Please enter a 10-digit number',
-                        },
                     ]}
                 >
-                    <Input addonBefore="+91" />
+                    <Input type="number" />
                 </Form.Item>
 
                 <Form.Item
-                    label="Age"
-                    name="age"
+                    label="Age/Gender"
+                    name="age_gender"
                     rules={[
                         {
                             required: true,
-                            message: 'Please Enter Age',
+                            message: 'Please Enter Age/Gender',
                         },
                     ]}
                 >
-                    <Input/>
+                    <Input />
                 </Form.Item>
 
                 <Form.Item
-                    label="Gender"
-                    name="gender"
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Please Select Gender',
-                        },
-                    ]}
-                >
-                    <Select placeholder="Select gender">
-                        {genderOptions.map((option) => (
-                            <Option key={option.value} value={option.value}>
-                                {option.label}
-                            </Option>
-                        ))}
-                    </Select>
-                </Form.Item>
-
-                <Form.Item
-                    label="Time slot"
+                    label="Select your time slot"
                     name="slot"
                     rules={[
                         {
@@ -206,15 +135,12 @@ const Booking = () => {
                     }}
                 >
                     <Button type="primary" htmlType="submit">
-                        Book Appointment
+                        Book
                     </Button>
                 </Form.Item>
             </Form>
-          </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default Booking;
